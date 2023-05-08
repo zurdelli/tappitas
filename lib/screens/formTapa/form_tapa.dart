@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:tappitas/screens/formTapa/widgets/dropdown_types.dart';
 
 import 'package:tappitas/db.dart';
 import 'package:tappitas/models/tapa.dart';
+import 'package:image/image.dart' as ImageProcess;
 
 //Clase que representa la pantalla con el formulario que se ve al querer crear
 //una tapa
