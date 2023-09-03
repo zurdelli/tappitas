@@ -13,6 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^6.0.0
+  path_provider: 
   sqflite: ^2.0.0+3
   path: 
   cupertino_icons: ^1.0.2

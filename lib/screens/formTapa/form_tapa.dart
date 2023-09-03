@@ -7,12 +7,11 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:tappitas/screens/formTapa/widgets/dropdown_types.dart';
-import 'package:tappitas/screens/formTapa/widgets/photo_form.dart';
 import 'package:tappitas/screens/formTapa/select_photo_options_screen.dart';
 
 import 'package:tappitas/db.dart';
 import 'package:tappitas/models/tapa.dart';
-import 'package:tappitas/utility.dart';
+//import 'package:tappitas/utility.dart';
 
 //Clase que representa la pantalla con el formulario que se ve al querer crear
 //una tapa
@@ -27,7 +26,7 @@ class CreaTapa extends StatefulWidget {
 }
 
 class _CreaTapaState extends State<CreaTapa> {
-  File? imagen;
+  File? imagenF;
   String tapaAsStringBase64 = "";
 
   final nombreController = TextEditingController();
@@ -44,18 +43,14 @@ class _CreaTapaState extends State<CreaTapa> {
 
   final paisController = TextEditingController();
 
-  // late String _tapaAsStringb64;
+  bool isImageFilled = false;
+
   @override
   Widget build(BuildContext context) {
     final tapa = ModalRoute.of(context)!.settings.arguments as Tapa;
 
-    late String tapaAsStringb64;
-
-    if (tapa.imagen.isNotEmpty) {
-      tapaAsStringb64 = tapa.imagen;
-      print("he llegado hasta aqui $tapaAsStringb64");
-    } else {
-      tapaAsStringb64 = "";
+    if (tapaAsStringBase64.isEmpty) {
+      tapaAsStringBase64 = tapa.imagen;
     }
 
     nombreController.text = tapa.nombre;
@@ -91,13 +86,15 @@ class _CreaTapaState extends State<CreaTapa> {
                               color: Colors.grey.shade200,
                             ),
                             child: Center(
-                              child: imagen == null
+                              child: tapaAsStringBase64.isEmpty
                                   ? const Text(
                                       'No image selected',
                                       style: TextStyle(fontSize: 20),
                                     )
                                   : CircleAvatar(
-                                      backgroundImage: FileImage(imagen!),
+                                      //backgroundImage: FileImage(imagenF!),
+                                      backgroundImage: MemoryImage(
+                                          base64Decode(tapaAsStringBase64)),
                                       radius: 200.0,
                                     ),
                             )),
@@ -200,10 +197,9 @@ class _CreaTapaState extends State<CreaTapa> {
 
                   ElevatedButton(
                       onPressed: () {
-                        print("tapaaaaaaaaaaaaaaaaaa: $tapaAsStringb64");
                         if (CreaTapa._formKey.currentState!.validate()) {
                           if (tapa.id! > 0) {
-                            tapa.imagen = tapaAsStringb64;
+                            tapa.imagen = tapaAsStringBase64;
                             tapa.marca = marcaController.text;
                             tapa.nombre = nombreController.text;
                             tapa.color = colorController.text;
@@ -234,40 +230,22 @@ class _CreaTapaState extends State<CreaTapa> {
     );
   }
 
-  // getPhoto(BuildContext context) async {
-  // Future<String> pickImageFromGallery() async {
-  //   String imagenAsStr = "";
-  //   final ImagePicker picker = ImagePicker();
-  //   final XFile? imagen = await picker.pickImage(source: ImageSource.gallery);
-  //   imagenAsStr = base64Encode(await imagen!.readAsBytes());
-
-  //   return imagenAsStr;
-  // }
-
   Future _pickImage(ImageSource source) async {
     try {
-      final XFile? image = await ImagePicker().pickImage(source: source);
+      final XFile? image = await ImagePicker().pickImage(
+          source: source, maxHeight: 200, maxWidth: 200, imageQuality: 70);
       if (image == null) return;
       File? img = File(image.path);
+      print("path: ${image.path}");
       tapaAsStringBase64 = base64Encode(img.readAsBytesSync());
+
       print("tapaAsStringBase64: $tapaAsStringBase64");
       //img = await _cropImage(imageFile: img);
 
       setState(() {
-        imagen = img;
+        isImageFilled = true;
+        imagenF = img;
         Navigator.of(context).pop();
-
-        // Navigator.popAndPushNamed(context, "/formtapa",
-        //     arguments: Tapa(
-        //         id: 0,
-        //         imagen: tapaAsStringBase64,
-        //         nombre: '',
-        //         color: '',
-        //         fecha: DateFormat('dd:mm:yy').format(DateTime.now()).toString(),
-        //         lugar: '',
-        //         marca: '',
-        //         pais: '',
-        //         tipo: ''));
       });
     } on PlatformException catch (e) {
       print("exception: $e");
