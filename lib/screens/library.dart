@@ -1,6 +1,7 @@
 import 'dart:core';
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:tappitas/models/tapa.dart';
 import 'package:tappitas/db.dart';
 import 'package:tappitas/screens/home/widgets/bottom_app_bar.dart';
@@ -18,10 +19,12 @@ class Listado extends StatelessWidget {
             Navigator.popAndPushNamed(context, "/formtapa",
                 arguments: Tapa(
                     id: 0,
-                    //imagen: ,
+                    imagen: '',
                     nombre: '',
                     color: '',
-                    fecha: DateTime.now().toString(),
+                    fecha: DateFormat('dd:mm:yy')
+                        .format(DateTime.now())
+                        .toString(),
                     lugar: '',
                     marca: '',
                     pais: '',
@@ -33,7 +36,15 @@ class Listado extends StatelessWidget {
           fabLocation: FloatingActionButtonLocation.centerDocked,
           shape: const CircularNotchedRectangle(),
         ),
-        body: Container(child: Lista()));
+        body: //Column(
+            //mainAxisSize: MainAxisSize.min,
+            //crossAxisAlignment: CrossAxisAlignment.center,
+            //children: <Widget>[
+            //Text('Este es el texto de prueba'),
+            Lista()
+        //],
+        //),
+        );
   }
 }
 
@@ -62,30 +73,51 @@ class _MiLista extends State<Lista> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-        itemCount: tapitas.length,
-        itemBuilder: (context, i) => Dismissible(
-            key: Key(i.toString()),
-            direction: DismissDirection.startToEnd,
-            background: Container(
-                color: Colors.red,
-                padding: EdgeInsets.only(left: 5),
-                child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Icon(Icons.delete, color: Colors.white))),
-            onDismissed: (direction) {
-              DB.delete(tapitas[i]);
+      itemCount: tapitas.length,
+      itemBuilder: (context, i) => Dismissible(
+        key: Key(i.toString()),
+        direction: DismissDirection.startToEnd,
+        background: Container(
+            color: Colors.red,
+            padding: EdgeInsets.only(left: 5),
+            child: Align(
+                alignment: Alignment.centerLeft,
+                child: Icon(Icons.delete, color: Colors.white))),
+        onDismissed: (direction) {
+          DB.delete(tapitas[i]);
+        },
+        child: ListTile(
+          title: Text.rich(
+            TextSpan(
+              text: "${tapitas[i].marca} - ",
+              children: <TextSpan>[
+                TextSpan(
+                    text: tapitas[i].nombre,
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                TextSpan(
+                    text: "(${tapitas[i].pais})",
+                    style: TextStyle(fontStyle: FontStyle.italic)),
+              ],
+            ),
+          ),
+          leading: tapitas[i].imagen.isNotEmpty
+              ? Image.memory(base64Decode(tapitas[i].imagen))
+              : FlutterLogo(),
+          subtitle: Text("Tomada el ${tapitas[i].fecha}"),
+          isThreeLine: true,
+          trailing: MaterialButton(
+            onPressed: () {
+              //se utiliza este metodo (popAndPushNamed) para terminar
+              // con la pantalla y volver a abrir la otra por problemas
+              // con el globalKey del form
+              Navigator.popAndPushNamed(context, "/formtapa",
+                  arguments: tapitas[i]);
+              //arguments: Tapa(nombre: "Juan", especie: "Pedro"));
             },
-            child: ListTile(
-                title: Text(tapitas[i].nombre),
-                trailing: MaterialButton(
-                    onPressed: () {
-                      //se utiliza este metodo (popAndPushNamed) para terminar
-                      // con la pantalla y volver a abrir la otra por problemas
-                      // con el globalKey del form
-                      Navigator.popAndPushNamed(context, "/formtapa",
-                          arguments: tapitas[i]);
-                      //arguments: Tapa(nombre: "Juan", especie: "Pedro"));
-                    },
-                    child: Icon(Icons.edit)))));
+            child: Icon(Icons.edit),
+          ),
+        ),
+      ),
+    );
   }
 }

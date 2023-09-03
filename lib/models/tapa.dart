@@ -1,10 +1,8 @@
-import 'dart:typed_data';
-
 /// Modelo de la tapa
 class Tapa {
   int? id;
+  late String imagen;
   String marca;
-  late Uint8List? imagen;
   late String nombre;
   late String fecha;
   late String lugar;
@@ -16,7 +14,7 @@ class Tapa {
 
   Tapa({
     this.id,
-    this.imagen,
+    required this.imagen,
     required this.marca,
     required this.color,
     required this.fecha,
