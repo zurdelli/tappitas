@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 import 'package:image_picker/image_picker.dart';
 
@@ -11,7 +12,6 @@ import 'package:tappitas/screens/formTapa/select_photo_options_screen.dart';
 
 import 'package:tappitas/db.dart';
 import 'package:tappitas/models/tapa.dart';
-//import 'package:tappitas/utility.dart';
 
 //Clase que representa la pantalla con el formulario que se ve al querer crear
 //una tapa
@@ -26,7 +26,6 @@ class CreaTapa extends StatefulWidget {
 }
 
 class _CreaTapaState extends State<CreaTapa> {
-  File? imagenF;
   String tapaAsStringBase64 = "";
 
   final nombreController = TextEditingController();
@@ -42,8 +41,6 @@ class _CreaTapaState extends State<CreaTapa> {
   final lugarController = TextEditingController();
 
   final paisController = TextEditingController();
-
-  bool isImageFilled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +89,6 @@ class _CreaTapaState extends State<CreaTapa> {
                                       style: TextStyle(fontSize: 20),
                                     )
                                   : CircleAvatar(
-                                      //backgroundImage: FileImage(imagenF!),
                                       backgroundImage: MemoryImage(
                                           base64Decode(tapaAsStringBase64)),
                                       radius: 200.0,
@@ -232,24 +228,48 @@ class _CreaTapaState extends State<CreaTapa> {
 
   Future _pickImage(ImageSource source) async {
     try {
-      final XFile? image = await ImagePicker().pickImage(
-          source: source, maxHeight: 200, maxWidth: 200, imageQuality: 70);
+      final XFile? image =
+          await ImagePicker().pickImage(source: source, imageQuality: 100);
       if (image == null) return;
+
       File? img = File(image.path);
       print("path: ${image.path}");
-      tapaAsStringBase64 = base64Encode(img.readAsBytesSync());
+      //tapaAsStringBase64 = base64Encode(img.readAsBytesSync());
 
-      print("tapaAsStringBase64: $tapaAsStringBase64");
-      //img = await _cropImage(imageFile: img);
+      img = await _cropImage(img);
 
       setState(() {
-        isImageFilled = true;
-        imagenF = img;
-        Navigator.of(context).pop();
+        //Navigator.of(context).pop();
       });
     } on PlatformException catch (e) {
       print("exception: $e");
       Navigator.of(context).pop();
+    }
+  }
+
+  // Add the below function inside your working class
+  Future _cropImage(File imageFile) async {
+    if (imageFile != null) {
+      CroppedFile? cropped = await ImageCropper()
+          .cropImage(sourcePath: imageFile!.path, aspectRatioPresets: [
+        CropAspectRatioPreset.square,
+      ], uiSettings: [
+        AndroidUiSettings(
+            toolbarTitle: 'Crop',
+            cropGridColor: Colors.black,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: true),
+        IOSUiSettings(title: 'Crop')
+      ]);
+
+      if (cropped != null) {
+        setState(() {
+          imageFile = File(cropped.path);
+          tapaAsStringBase64 = base64Encode(imageFile.readAsBytesSync());
+          print("tapaAsStringBase64: $tapaAsStringBase64");
+          Navigator.of(context).pop();
+        });
+      }
     }
   }
 
