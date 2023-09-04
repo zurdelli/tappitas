@@ -58,7 +58,44 @@ class _CreaTapaState extends State<CreaTapa> {
     paisController.text = tapa.pais;
 
     return Scaffold(
-      appBar: AppBar(title: Text("Guardar")),
+      appBar: AppBar(
+        title: Text("Tapa"),
+        actions: [
+          IconButton(
+            tooltip: "Favorito",
+            icon: const Icon(Icons.favorite),
+            onPressed: () {},
+          ),
+          IconButton(
+            tooltip: "Eliminar",
+            icon: const Icon(Icons.delete),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text("Eliminar"),
+                    content: Text("¿Está seguro de querer eliminar la tapa?"),
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("Cancelar")),
+                      TextButton(
+                          onPressed: () {
+                            DB.delete(tapa);
+                            Navigator.popAndPushNamed(context, "/");
+                          },
+                          child: Text("Eliminar"))
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Form(
@@ -191,34 +228,45 @@ class _CreaTapaState extends State<CreaTapa> {
                     children: [DropdownButtonExample()],
                   ),
 
-                  ElevatedButton(
-                      onPressed: () {
-                        if (CreaTapa._formKey.currentState!.validate()) {
-                          if (tapa.id! > 0) {
-                            tapa.imagen = tapaAsStringBase64;
-                            tapa.marca = marcaController.text;
-                            tapa.nombre = nombreController.text;
-                            tapa.color = colorController.text;
-                            tapa.fecha = DateTime.now().toString();
-                            tapa.lugar = lugarController.text;
-                            tapa.pais = paisController.text;
-                            tapa.tipo = DropdownButtonExample().toString();
-                            DB.update(tapa);
-                          } else {
-                            DB.insert(Tapa(
-                                imagen: tapaAsStringBase64,
-                                marca: marcaController.text,
-                                color: colorController.text,
-                                fecha: DateTime.now().toString(),
-                                lugar: lugarController.text,
-                                nombre: nombreController.text,
-                                pais: paisController.text,
-                                tipo: DropdownButtonExample().toString()));
-                          }
-                          Navigator.popAndPushNamed(context, "/");
-                        }
-                      },
-                      child: const Text('Guardar')),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                          onPressed: () {
+                            if (CreaTapa._formKey.currentState!.validate()) {
+                              if (tapa.id! > 0) {
+                                tapa.imagen = tapaAsStringBase64;
+                                tapa.marca = marcaController.text;
+                                tapa.nombre = nombreController.text;
+                                tapa.color = colorController.text;
+                                tapa.fecha = DateTime.now().toString();
+                                tapa.lugar = lugarController.text;
+                                tapa.pais = paisController.text;
+                                tapa.tipo = DropdownButtonExample().toString();
+                                DB.update(tapa);
+                              } else {
+                                DB.insert(Tapa(
+                                    imagen: tapaAsStringBase64,
+                                    marca: marcaController.text,
+                                    color: colorController.text,
+                                    fecha: DateTime.now().toString(),
+                                    lugar: lugarController.text,
+                                    nombre: nombreController.text,
+                                    pais: paisController.text,
+                                    tipo: DropdownButtonExample().toString()));
+                              }
+                              Navigator.popAndPushNamed(context, "/");
+                            }
+                          },
+                          child: const Text('Guardar')),
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.popAndPushNamed(context, "/");
+                          },
+                          child: const Text('Cancelar'))
+                    ],
+                  ),
                 ],
               )),
         ),
@@ -226,6 +274,7 @@ class _CreaTapaState extends State<CreaTapa> {
     );
   }
 
+  /// image picker
   Future _pickImage(ImageSource source) async {
     try {
       final XFile? image =
@@ -233,21 +282,14 @@ class _CreaTapaState extends State<CreaTapa> {
       if (image == null) return;
 
       File? img = File(image.path);
-      print("path: ${image.path}");
-      //tapaAsStringBase64 = base64Encode(img.readAsBytesSync());
-
-      img = await _cropImage(img);
-
-      setState(() {
-        //Navigator.of(context).pop();
-      });
+      img = await _cropImage(img); // la llevo al cropper
     } on PlatformException catch (e) {
       print("exception: $e");
       Navigator.of(context).pop();
     }
   }
 
-  // Add the below function inside your working class
+  // image cropper
   Future _cropImage(File imageFile) async {
     if (imageFile != null) {
       CroppedFile? cropped = await ImageCropper()
@@ -266,7 +308,7 @@ class _CreaTapaState extends State<CreaTapa> {
         setState(() {
           imageFile = File(cropped.path);
           tapaAsStringBase64 = base64Encode(imageFile.readAsBytesSync());
-          print("tapaAsStringBase64: $tapaAsStringBase64");
+          //print("tapaAsStringBase64: $tapaAsStringBase64");
           Navigator.of(context).pop();
         });
       }

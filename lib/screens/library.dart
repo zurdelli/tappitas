@@ -100,9 +100,12 @@ class _MiLista extends State<Lista> {
               ],
             ),
           ),
-          leading: tapitas[i].imagen.isNotEmpty
-              ? Image.memory(base64Decode(tapitas[i].imagen))
-              : FlutterLogo(),
+          leading: CircleAvatar(
+            backgroundImage: tapitas[i].imagen.isNotEmpty
+                ? MemoryImage(base64Decode(tapitas[i].imagen))
+                : null,
+            radius: 30.0,
+          ),
           subtitle: Text("Tomada el ${tapitas[i].fecha}"),
           isThreeLine: true,
           trailing: MaterialButton(
@@ -112,7 +115,6 @@ class _MiLista extends State<Lista> {
               // con el globalKey del form
               Navigator.popAndPushNamed(context, "/formtapa",
                   arguments: tapitas[i]);
-              //arguments: Tapa(nombre: "Juan", especie: "Pedro"));
             },
             child: Icon(Icons.edit),
           ),
