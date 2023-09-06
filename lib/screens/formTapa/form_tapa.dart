@@ -137,30 +137,36 @@ class _CreaTapaState extends State<CreaTapa> {
 
                   // Un textFormfield sirve para insertar textfields dentro de un form.
                   // Como se puede ver tiene un validador dentro
-                  TextFormField(
-                      controller: nombreController,
-                      decoration: InputDecoration(
-                        border: UnderlineInputBorder(),
-                        hintText: 'Nombre',
+                  // TextFormField(
+                  //   controller: nombreController,
+                  //   textCapitalization: TextCapitalization.sentences,
+                  //   decoration: InputDecoration(
+                  //     border: UnderlineInputBorder(),
+                  //     hintText: 'Nombre',
+                  //   ),
+                  // ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 100,
+                        child: TextFormField(
+                            controller: marcaController,
+                            textCapitalization: TextCapitalization.sentences,
+                            decoration: InputDecoration(
+                              border: UnderlineInputBorder(),
+                              hintText: 'Marca',
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Debes insertar texto';
+                              }
+                              return null;
+                            }),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Debes insertar texto';
-                        }
-                        return null;
-                      }),
-                  TextFormField(
-                      controller: marcaController,
-                      decoration: InputDecoration(
-                        border: UnderlineInputBorder(),
-                        hintText: 'Marca',
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Debes insertar texto';
-                        }
-                        return null;
-                      }),
+                    ],
+                  ),
                   // DatePickerDialog(
                   //     initialDate: DateTime.now(),
                   //     firstDate: DateTime(2000),
@@ -176,6 +182,7 @@ class _CreaTapaState extends State<CreaTapa> {
                             lastDate: DateTime.now(),
                             initialDate: DateTime.now()),
                       ),
+                      TiposDeCervezaDropdown(),
                       Row(
                         children: [
                           SizedBox(
@@ -224,10 +231,6 @@ class _CreaTapaState extends State<CreaTapa> {
                       ),
                     ],
                   ),
-                  Row(
-                    children: [DropdownButtonExample()],
-                  ),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -285,33 +288,31 @@ class _CreaTapaState extends State<CreaTapa> {
       img = await _cropImage(img); // la llevo al cropper
     } on PlatformException catch (e) {
       print("exception: $e");
-      Navigator.of(context).pop();
+      Navigator.pop(context);
     }
   }
 
   // image cropper
   Future _cropImage(File imageFile) async {
-    if (imageFile != null) {
-      CroppedFile? cropped = await ImageCropper()
-          .cropImage(sourcePath: imageFile!.path, aspectRatioPresets: [
-        CropAspectRatioPreset.square,
-      ], uiSettings: [
-        AndroidUiSettings(
-            toolbarTitle: 'Crop',
-            cropGridColor: Colors.black,
-            initAspectRatio: CropAspectRatioPreset.original,
-            lockAspectRatio: true),
-        IOSUiSettings(title: 'Crop')
-      ]);
+    CroppedFile? cropped = await ImageCropper()
+        .cropImage(sourcePath: imageFile.path, aspectRatioPresets: [
+      CropAspectRatioPreset.square,
+    ], uiSettings: [
+      AndroidUiSettings(
+          toolbarTitle: 'Crop',
+          cropGridColor: Colors.black,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: true),
+      IOSUiSettings(title: 'Crop')
+    ]);
 
-      if (cropped != null) {
-        setState(() {
-          imageFile = File(cropped.path);
-          tapaAsStringBase64 = base64Encode(imageFile.readAsBytesSync());
-          //print("tapaAsStringBase64: $tapaAsStringBase64");
-          Navigator.of(context).pop();
-        });
-      }
+    if (cropped != null) {
+      setState(() {
+        imageFile = File(cropped.path);
+        tapaAsStringBase64 = base64Encode(imageFile.readAsBytesSync());
+        //print("tapaAsStringBase64: $tapaAsStringBase64");
+        Navigator.of(context).pop();
+      });
     }
   }
 

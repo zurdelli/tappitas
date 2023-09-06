@@ -11,20 +11,24 @@ const List<String> listaTipos = <String>[
   'Otras'
 ];
 
-class DropdownButtonExample extends StatefulWidget {
-  const DropdownButtonExample({super.key});
+class TiposDeCervezaDropdown extends StatefulWidget {
+  TiposDeCervezaDropdown({super.key});
 
   @override
-  State<DropdownButtonExample> createState() => _DropdownButtonExampleState();
+  State<TiposDeCervezaDropdown> createState() => _TiposDeCervezaDropdownState();
 }
 
-class _DropdownButtonExampleState extends State<DropdownButtonExample> {
-  String dropdownValue = listaTipos.first;
+class _TiposDeCervezaDropdownState extends State<TiposDeCervezaDropdown> {
+  String valor = listaTipos.first;
+
+  String getValue() {
+    return valor;
+  }
 
   @override
   Widget build(BuildContext context) {
     return DropdownButton<String>(
-      value: dropdownValue,
+      value: valor,
       icon: const Icon(Icons.arrow_downward),
       elevation: 16,
       style: const TextStyle(color: Colors.deepPurple),
@@ -35,7 +39,7 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
       onChanged: (String? value) {
         // This is called when the user selects an item.
         setState(() {
-          dropdownValue = value!;
+          valor = value!;
         });
       },
       items: listaTipos.map<DropdownMenuItem<String>>((String value) {
