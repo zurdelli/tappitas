@@ -165,12 +165,9 @@ class _CreaTapaState extends State<CreaTapa> {
                               return null;
                             }),
                       ),
+                      SizedBox(width: 100, child: TiposDeCervezaDropdown()),
                     ],
                   ),
-                  // DatePickerDialog(
-                  //     initialDate: DateTime.now(),
-                  //     firstDate: DateTime(2000),
-                  //     lastDate: DateTime.now()),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -246,7 +243,7 @@ class _CreaTapaState extends State<CreaTapa> {
                                 tapa.fecha = DateTime.now().toString();
                                 tapa.lugar = lugarController.text;
                                 tapa.pais = paisController.text;
-                                tapa.tipo = DropdownButtonExample().toString();
+                                tapa.tipo = TiposDeCervezaDropdown().toString();
                                 DB.update(tapa);
                               } else {
                                 DB.insert(Tapa(
@@ -257,7 +254,7 @@ class _CreaTapaState extends State<CreaTapa> {
                                     lugar: lugarController.text,
                                     nombre: nombreController.text,
                                     pais: paisController.text,
-                                    tipo: DropdownButtonExample().toString()));
+                                    tipo: TiposDeCervezaDropdown().toString()));
                               }
                               Navigator.popAndPushNamed(context, "/");
                             }
