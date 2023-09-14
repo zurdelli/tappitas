@@ -2,53 +2,47 @@
 class Tapa {
   int? id;
   late String imagen;
-  String marca;
-  late String nombre;
+  late String marca;
   late String fecha;
   late String lugar;
-  late String color;
+  late String fgColor;
+  late String bgColor;
   late String pais;
   late String tipo;
+  late int isFavorited;
+  late double rating;
+  late String modelo;
 
   //Tapa(this.id, this.marca);
 
-  Tapa({
-    this.id,
-    required this.imagen,
-    required this.marca,
-    required this.color,
-    required this.fecha,
-    required this.lugar,
-    required this.nombre,
-    required this.pais,
-    required this.tipo,
-  });
-
-  // @override
-  // int get hashCode => id;
-
-  // @override
-  // bool operator ==(Object other) => other is Tapa && other.id == id;
-
-  // String get marca => marca;
-  // String get nombre => nombre;
-  // DateTime get fecha => fecha;
-  // String get lugar => lugar;
-  // String get color => color;
-  // String get pais => pais;
-  // String get tipo => tipo;
+  Tapa(
+      {this.id,
+      required this.imagen,
+      required this.marca,
+      required this.fgColor,
+      required this.bgColor,
+      required this.fecha,
+      required this.lugar,
+      required this.pais,
+      required this.tipo,
+      required this.isFavorited,
+      required this.rating,
+      required this.modelo});
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'imagen': imagen,
       'marca': marca,
-      'nombre': nombre,
       'fecha': fecha.toString(),
       'lugar': lugar,
-      'color': color,
+      'fgColor': fgColor,
+      'bgColor': bgColor,
       'pais': pais,
       'tipo': tipo,
+      'isFavorited': isFavorited,
+      'rating': rating,
+      'modelo': modelo
     };
   }
 
@@ -56,6 +50,6 @@ class Tapa {
   // each dog when using the print statement.
   @override
   String toString() {
-    return 'Tapa{id: $id, name: $nombre, marca: $marca}';
+    return 'Tapa{id: $id, tipo: $tipo, marca: $marca}';
   }
 }

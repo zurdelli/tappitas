@@ -8,11 +8,12 @@ class DB {
 
   /// Crea o abre la database "tapitas.db"
   static Future<Database> _openDB() async {
-    return openDatabase(join(await getDatabasesPath(), 'tapitas.db'),
+    return openDatabase(join(await getDatabasesPath(), '$tabla.db'),
         onCreate: (db, version) {
       return db.execute(
-        "CREATE TABLE $tabla (id INTEGER PRIMARY KEY, imagen BLOB, marca TEXT, nombre TEXT, "
-        "fecha TEXT, lugar TEXT, color TEXT, pais TEXT, tipo TEXT)",
+        "CREATE TABLE $tabla (id INTEGER PRIMARY KEY, imagen BLOB, marca TEXT, "
+        "fecha TEXT, lugar TEXT, fgColor TEXT, bgColor TEXT, pais TEXT,"
+        " tipo TEXT, isFavorited INTEGER, rating REAL, modelo TEXT)",
       );
     }, version: 1);
   }
@@ -42,6 +43,14 @@ class DB {
         .update(tabla, tapa.toMap(), where: "id = ?", whereArgs: [tapa.id]);
   }
 
+  /// Solo actualiza si es fav o no
+  static Future<void> updateFavorite(int newFavorite, int? id) async {
+    Database database = await _openDB();
+
+    await database.rawUpdate(
+        'UPDATE $tabla SET isFavorited = ? WHERE id = ?', [newFavorite, id]);
+  }
+
   ///Genera una lista de tapas
   static Future<List<Tapa>> tapas() async {
     Database db = await _openDB();
@@ -55,22 +64,35 @@ class DB {
             id: tapasMap[i]['id'],
             imagen: tapasMap[i]['imagen'],
             marca: tapasMap[i]['marca'],
-            color: tapasMap[i]['color'],
             fecha: tapasMap[i]['fecha'],
             lugar: tapasMap[i]['lugar'],
-            nombre: tapasMap[i]['nombre'],
+            fgColor: tapasMap[i]['fgColor'],
+            bgColor: tapasMap[i]['bgColor'],
             pais: tapasMap[i]['pais'],
-            tipo: tapasMap[i]['tipo']));
+            tipo: tapasMap[i]['tipo'],
+            isFavorited: tapasMap[i]['isFavorited'],
+            rating: tapasMap[i]['rating'],
+            modelo: tapasMap[i]['modelo']));
   }
 
   static Future<List<Tapa>> busquedaTapas(
-      String nomClausula, marClausula, paiClausula, colClausula) async {
+      String marClausula,
+      String tipClausula,
+      String paiClausula,
+      String fgColClausula,
+      String bgColClausula) async {
     Database db = await _openDB();
 
     final List<Map<String, dynamic>> busquedaMap = await db.query(tabla,
         where:
-            "nombre LIKE ? AND marca LIKE ? AND pais LIKE ? AND color LIKE ?",
-        whereArgs: [nomClausula, marClausula, paiClausula, colClausula]);
+            "marca LIKE ? AND tipo LIKE ? AND pais LIKE ? AND fgColor LIKE ? AND bgColor LIKE ?",
+        whereArgs: [
+          marClausula,
+          tipClausula,
+          paiClausula,
+          fgColClausula,
+          bgColClausula
+        ]);
 
     return List.generate(
         busquedaMap.length,
@@ -78,11 +100,14 @@ class DB {
             id: busquedaMap[i]['id'],
             imagen: busquedaMap[i]['imagen'],
             marca: busquedaMap[i]['marca'],
-            color: busquedaMap[i]['color'],
             fecha: busquedaMap[i]['fecha'],
             lugar: busquedaMap[i]['lugar'],
-            nombre: busquedaMap[i]['nombre'],
+            fgColor: busquedaMap[i]['fgColor'],
+            bgColor: busquedaMap[i]['bgColor'],
             pais: busquedaMap[i]['pais'],
-            tipo: busquedaMap[i]['tipo']));
+            tipo: busquedaMap[i]['tipo'],
+            isFavorited: busquedaMap[i]['isFavorited'],
+            rating: busquedaMap[i]['rating'],
+            modelo: busquedaMap[i]['modelo']));
   }
 }

@@ -19,15 +19,18 @@ class Listado extends StatelessWidget {
                 arguments: Tapa(
                     id: 0,
                     imagen: '',
-                    nombre: '',
-                    color: '',
-                    fecha: DateFormat('dd:mm:yy')
+                    fgColor: '',
+                    bgColor: '',
+                    fecha: DateFormat('dd-MM-yyyy')
                         .format(DateTime.now())
                         .toString(),
                     lugar: '',
                     marca: '',
                     pais: '',
-                    tipo: ''));
+                    tipo: '',
+                    isFavorited: 0,
+                    rating: 0.0,
+                    modelo: ''));
           },
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -53,7 +56,7 @@ class _ListaState extends State<Lista> {
 
   /// Carga tapitas sera el metodo encargado del setState
   cargaTapitas() async {
-    /// auxTapa sera una Lista de tapas que como es asincrona se carga luego
+    /// auxTapa es una lista de tapas obtenida desde la ddbb
     List<Tapa> auxTapa = await DB.tapas();
 
     setState(() {

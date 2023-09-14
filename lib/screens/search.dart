@@ -33,7 +33,7 @@ class _ListaBusquedaState extends State<ListaBusqueda> {
 
   Future<List<Tapa>> buscaTapitas(List<String> clausula) async {
     List<Tapa> tapasAux = await DB.busquedaTapas(
-        clausula[0], clausula[1], clausula[2], clausula[3]);
+        clausula[0], clausula[1], clausula[2], clausula[3], clausula[4]);
     return tapasAux;
   }
 

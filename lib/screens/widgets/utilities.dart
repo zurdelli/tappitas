@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tappitas/db.dart';
 import 'package:tappitas/models/tapa.dart';
 import 'package:tappitas/screens/library.dart';
@@ -16,31 +17,59 @@ class Utilities {
         physics: const BouncingScrollPhysics(),
         itemBuilder: (context, i) => Dismissible(
               key: Key(i.toString()),
-              direction: DismissDirection.startToEnd,
+              //direction: DismissDirection.startToEnd,
               background: Container(
                   color: Colors.red,
                   padding: EdgeInsets.only(left: 5),
                   child: Align(
                       alignment: Alignment.centerLeft,
                       child: Icon(Icons.delete, color: Colors.white))),
-              onDismissed: (direction) {
-                //DB.delete(tapitas[i]);
-              },
+              secondaryBackground: Container(
+                  color: Colors.blue,
+                  child: (Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: const [
+                          Icon(Icons.edit, color: Colors.red),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          Text(
+                            'Edit',
+                            style: TextStyle(color: Colors.white),
+                          )
+                        ],
+                      )))),
+              onDismissed: (direction) {},
               confirmDismiss: (direction) async {
-                return await _showConfirmationDialogToDeleteTapa(
-                    context, i, tapas, callback);
+                if (direction == DismissDirection.startToEnd) {
+                  return await _showConfirmationDialogToDeleteTapa(
+                      context, i, tapas, callback);
+                } else {
+                  Navigator.popAndPushNamed(context, "/formtapa",
+                      arguments: tapas[i]);
+                }
               },
               child: ListTile(
                 title: Text.rich(
                   TextSpan(
-                    text: "${tapas[i].marca} - ",
-                    children: <TextSpan>[
+                    children: [
                       TextSpan(
-                          text: tapas[i].nombre,
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                        text: "${tapas[i].marca} - ",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       TextSpan(
-                          text: "(${tapas[i].pais})",
+                        text: tapas[i].tipo,
+                      ),
+                      TextSpan(
+                          text: tapas[i].pais.trim().length > 3
+                              ? " (${tapas[i].pais.trim().substring(0, 3)})"
+                              : "",
                           style: TextStyle(fontStyle: FontStyle.italic)),
+                      TextSpan(
+                        text: " - ${tapas[i].rating}",
+                      ),
                     ],
                   ),
                 ),
@@ -50,19 +79,27 @@ class Utilities {
                       : null,
                   radius: 30.0,
                 ),
-                subtitle: Text(
-                    "Tomada el ${tapas[i].fecha.substring(0, 16)} \n${tapas[i].color}"),
+                subtitle:
+                    Text("Tomada el ${tapas[i].fecha} \nen ${tapas[i].lugar}"),
                 isThreeLine: true,
-                trailing: MaterialButton(
-                  onPressed: () {
-                    //se utiliza este metodo (popAndPushNamed) para terminar
-                    // con la pantalla y volver a abrir la otra por problemas
-                    // con el globalKey del form
-                    Navigator.popAndPushNamed(context, "/formtapa",
-                        arguments: tapas[i]);
-                  },
-                  child: Icon(Icons.edit),
-                ),
+                trailing: IconButton(
+                    onPressed: () {
+                      if (tapas[i].isFavorited == 0) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: const Text("Agregado a favs")));
+                        DB.updateFavorite(1, tapas[i].id);
+                        callback();
+                      } else if (tapas[i].isFavorited == 1) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: const Text("Quitado de favoritos")));
+                        DB.updateFavorite(0, tapas[i].id);
+                        callback();
+                      }
+                    },
+                    icon: tapas[i].isFavorited == 0
+                        ? Icon(Icons.favorite_border)
+                        : Icon(Icons.favorite)),
+                iconColor: tapas[i].isFavorited == 0 ? Colors.grey : Colors.red,
                 onTap: () {
                   Utilities().muestraAlertDialog(context, 1, tapas[i].imagen);
                 },
@@ -104,11 +141,15 @@ class Utilities {
   /// dialog = 0 -> Busqueda de tapas (alertBusqueda)
   ///        = 1 -> Zoom tapa (alertTapa)
   muestraAlertDialog(BuildContext context, int dialog, String? tapaAsString) {
-    showDialog<String>(
+    showDialog(
       context: context,
       builder: (BuildContext context) => BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Dialog(
+            elevation: 10,
+            //shape: RoundedRectangleBorder(
+            //  borderRadius: BorderRadius.all(Radius.circular(300)),
+
             child: dialog == 0
                 ? alertBusqueda(context)
                 : alertTapa(context, tapaAsString ?? 'null')),
@@ -118,93 +159,105 @@ class Utilities {
 
   Widget alertTapa(BuildContext context, String tapaAsStringBase64) {
     //String tapaAsString = tapaAsStringBase64 ?? 'null';
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      //crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-            height: 250,
-            width: 250,
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: const Color.fromARGB(255, 255, 255, 255),
-            ),
-            child: Center(
-              child: CircleAvatar(
-                backgroundImage: MemoryImage(base64Decode(tapaAsStringBase64)),
-                radius: 200.0,
-              ),
-            )),
-      ],
-    );
+    return Container(
+        height: 250,
+        width: 200,
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white,
+        ),
+        child: Center(
+          child: CircleAvatar(
+            backgroundImage: MemoryImage(base64Decode(tapaAsStringBase64)),
+            radius: 200.0,
+          ),
+        ));
   }
 
   ///Crea la pantalla del AlertDialog para la busqueda
   Widget alertBusqueda(BuildContext context) {
-    final nomController = TextEditingController();
+    final tipoController = TextEditingController();
     final marController = TextEditingController();
-    final colController = TextEditingController();
+    final fgColorController = TextEditingController();
+    final bgColorController = TextEditingController();
     final paiController = TextEditingController();
 
-    return Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text("Búsqueda"),
-          TextField(
-            controller: marController,
-            decoration: InputDecoration(
-                border: UnderlineInputBorder(), hintText: 'Marca'),
-          ),
-          TextField(
-            controller: nomController,
-            decoration: InputDecoration(
-                border: UnderlineInputBorder(), hintText: 'Tipo de cerveza'),
-          ),
-          TextField(
-            controller: paiController,
-            decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-                hintText: 'Pais de procedencia'),
-          ),
-          TextField(
-            controller: colController,
-            decoration: InputDecoration(
-                border: UnderlineInputBorder(), hintText: 'Color de la tapa'),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text('Cancelar'),
-              ),
-              TextButton(
-                onPressed: () {
-                  getClausule(context, nomController.text, marController.text,
-                      paiController.text, colController.text);
-                },
-                child: const Text('Enviar'),
-              ),
-            ],
-          ),
-        ]);
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text("Búsqueda"),
+            TextField(
+              controller: marController,
+              textCapitalization: TextCapitalization.words,
+              decoration: InputDecoration(
+                  border: UnderlineInputBorder(), hintText: 'Marca'),
+            ),
+            TextField(
+              controller: tipoController,
+              decoration: InputDecoration(
+                  border: UnderlineInputBorder(), hintText: 'Tipo de cerveza'),
+            ),
+            TextField(
+              controller: paiController,
+              textCapitalization: TextCapitalization.words,
+              decoration: InputDecoration(
+                  border: UnderlineInputBorder(),
+                  hintText: 'Pais de procedencia'),
+            ),
+            TextField(
+              controller: fgColorController,
+              textCapitalization: TextCapitalization.words,
+              decoration: InputDecoration(
+                  border: UnderlineInputBorder(), hintText: 'Color de frente'),
+            ),
+            TextField(
+              controller: bgColorController,
+              textCapitalization: TextCapitalization.words,
+              decoration: InputDecoration(
+                  border: UnderlineInputBorder(), hintText: 'Color de fondo'),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Cancelar'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    getClausule(
+                        context,
+                        marController.text,
+                        tipoController.text,
+                        paiController.text,
+                        fgColorController.text,
+                        bgColorController.text);
+                  },
+                  child: const Text('Enviar'),
+                ),
+              ],
+            ),
+          ]),
+    );
   }
 
   /// Crea la clausula para la busqueda en la bbdd
-  void getClausule(BuildContext context, String nomC, String marC, String paiC,
-      String colC) {
-    if (nomC.isEmpty) nomC = '%';
+  void getClausule(BuildContext context, String tipC, String marC, String paiC,
+      String fgColC, String bgColC) {
+    if (tipC.isEmpty) tipC = '%';
     if (marC.isEmpty) marC = '%';
     if (paiC.isEmpty) paiC = '%';
-    if (colC.isEmpty) colC = '%';
+    if (fgColC.isEmpty) fgColC = '%';
+    if (bgColC.isEmpty) bgColC = '%';
 
-    List<String> myList = [nomC, marC, paiC, colC];
+    List<String> myList = [tipC, marC, paiC, fgColC, bgColC];
     print("myList: $myList");
     Navigator.popAndPushNamed(context, '/busqtapa', arguments: myList);
   }
