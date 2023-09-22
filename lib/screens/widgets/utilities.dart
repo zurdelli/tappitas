@@ -2,10 +2,8 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tappitas/db.dart';
 import 'package:tappitas/models/tapa.dart';
-import 'package:tappitas/screens/library.dart';
 
 class Utilities {
   /// Crea la listView que carga todas las tapitas. Recibe la funcion cargaTapitas()
@@ -103,6 +101,9 @@ class Utilities {
                 onTap: () {
                   Utilities().muestraAlertDialog(context, 1, tapas[i].imagen);
                 },
+                dense: false,
+                horizontalTitleGap: 10,
+                splashColor: Colors.amber,
               ),
             ));
   }

@@ -1,11 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:tappitas/db.dart';
+import 'package:tappitas/models/tapa.dart';
 import 'package:tappitas/screens/widgets/utilities.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MyAppBar({required this.titulo});
-
   final String titulo;
 
   @override
@@ -18,8 +19,15 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
             icon: const Icon(Icons.search),
             tooltip: 'Buscar'),
         IconButton(
-          onPressed: () {},
+          onPressed: () => Navigator.pushNamed(
+            context,
+            "/statistics",
+          ),
           icon: Icon(Icons.filter_list),
+        ),
+        IconButton(
+          onPressed: () {},
+          icon: Icon(Icons.book),
         ),
         IconButton(
           onPressed: () {},

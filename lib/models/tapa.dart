@@ -13,8 +13,6 @@ class Tapa {
   late double rating;
   late String modelo;
 
-  //Tapa(this.id, this.marca);
-
   Tapa(
       {this.id,
       required this.imagen,

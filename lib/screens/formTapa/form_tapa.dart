@@ -200,6 +200,7 @@ class _CreaTapaState extends State<CreaTapa> {
                           divisions: 10,
                           label: "$lastRating",
                           activeColor: Colors.amber,
+                          secondaryActiveColor: Colors.white,
                         ),
                       ],
                     ),
@@ -214,9 +215,6 @@ class _CreaTapaState extends State<CreaTapa> {
                 children: [
                   Expanded(
                     child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -492,7 +490,7 @@ class _CreaTapaState extends State<CreaTapa> {
       borderRadius: BorderRadius.all(Radius.circular(10)),
       value: valor,
       elevation: 16,
-      style: const TextStyle(color: Colors.black, fontSize: 16),
+      //style: const TextStyle(color: Colors.black, fontSize: 16),
       onChanged: (String? value) {
         setState(() {
           valor = value!;

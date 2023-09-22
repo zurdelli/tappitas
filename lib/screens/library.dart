@@ -15,7 +15,7 @@ class Listado extends StatelessWidget {
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () {
-            Navigator.popAndPushNamed(context, "/formtapa",
+            Navigator.pushNamed(context, "/formtapa",
                 arguments: Tapa(
                     id: 0,
                     imagen: '',

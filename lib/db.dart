@@ -110,4 +110,26 @@ class DB {
             rating: busquedaMap[i]['rating'],
             modelo: busquedaMap[i]['modelo']));
   }
+
+  static Future<List<Map<String, Object?>>> gimmeSomeData(
+      String parameter) async {
+    Database db = await _openDB();
+
+    String sentencia =
+        "SELECT $parameter, COUNT(*) FROM $tabla GROUP BY $parameter";
+
+    final List<Map<String, Object?>> busquedaMap = await db.rawQuery(sentencia);
+
+    //Map<String, Object?> returnMap = {};
+
+    //int counter = 0;
+
+    // for (var e in busquedaMap) {
+    //   returnMap.addAll(e);
+    // }
+
+    //print(returnMap);
+
+    return busquedaMap;
+  }
 }
