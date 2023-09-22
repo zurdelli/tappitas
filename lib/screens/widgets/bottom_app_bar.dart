@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tappitas/screens/widgets/utilities.dart';
 
 /// Clase que representa la barra de abajo
 class DemoBottomAppBar extends StatelessWidget {
@@ -20,7 +21,7 @@ class DemoBottomAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomAppBar(
       shape: shape,
-      color: Colors.blue,
+      color: Colors.red,
       child: IconTheme(
         data: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
         child: Row(
@@ -39,7 +40,16 @@ class DemoBottomAppBar extends StatelessWidget {
             IconButton(
               tooltip: 'Search',
               icon: const Icon(Icons.search),
-              onPressed: () {},
+              onPressed: () => showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => Dialog(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: Utilities().muestraAlertDialog(context, 0, null),
+                  ),
+                ),
+              ),
             ),
             IconButton(
               tooltip: 'Favorite',
