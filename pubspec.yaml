@@ -13,13 +13,18 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^6.0.0
+  path_provider: 
   sqflite: ^2.0.0+3
   path: 
   cupertino_icons: ^1.0.2
   flutter_localizations:
     sdk: flutter
   intl: any
-  image: ^4.0.17
+  image_picker: 
+  image_cropper: ^5.0.0
+  shared_preferences: ^2.0.15
+  location: ^5.0.0
+  geocoding: ^2.1.0
 
 dev_dependencies:
   flutter_test:

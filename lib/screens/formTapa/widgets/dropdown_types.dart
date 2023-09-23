@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tappitas/screens/formTapa/form_tapa.dart';
 
 const List<String> listaTipos = <String>[
   'Rubia',
@@ -11,20 +12,20 @@ const List<String> listaTipos = <String>[
   'Otras'
 ];
 
-class DropdownButtonExample extends StatefulWidget {
-  const DropdownButtonExample({super.key});
+class TiposDeCervezaDropdown extends StatefulWidget {
+  TiposDeCervezaDropdown({super.key});
 
   @override
-  State<DropdownButtonExample> createState() => _DropdownButtonExampleState();
+  State<TiposDeCervezaDropdown> createState() => TiposDeCervezaDropdownState();
 }
 
-class _DropdownButtonExampleState extends State<DropdownButtonExample> {
-  String dropdownValue = listaTipos.first;
+class TiposDeCervezaDropdownState extends State<TiposDeCervezaDropdown> {
+  String valor = listaTipos.first;
 
   @override
   Widget build(BuildContext context) {
     return DropdownButton<String>(
-      value: dropdownValue,
+      value: valor,
       icon: const Icon(Icons.arrow_downward),
       elevation: 16,
       style: const TextStyle(color: Colors.deepPurple),
@@ -33,9 +34,8 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
         color: Colors.deepPurpleAccent,
       ),
       onChanged: (String? value) {
-        // This is called when the user selects an item.
         setState(() {
-          dropdownValue = value!;
+          valor = value!;
         });
       },
       items: listaTipos.map<DropdownMenuItem<String>>((String value) {
