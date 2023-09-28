@@ -1,46 +1,51 @@
+import 'package:flutter/material.dart';
+
 /// Modelo de la tapa
 class Tapa {
   int? id;
   late String imagen;
-  late String marca;
-  late String fecha;
-  late String lugar;
-  late String fgColor;
-  late String bgColor;
-  late String pais;
-  late String tipo;
+  late String brewery;
+  late String brewCountry;
+  late String brewCountryCode;
+  late String date;
+  late String place;
+  late String primColor;
+  late String secoColor;
+  late String type;
   late int isFavorited;
   late double rating;
-  late String modelo;
+  late String model;
 
   Tapa(
       {this.id,
       required this.imagen,
-      required this.marca,
-      required this.fgColor,
-      required this.bgColor,
-      required this.fecha,
-      required this.lugar,
-      required this.pais,
-      required this.tipo,
+      required this.brewery,
+      required this.brewCountry,
+      required this.brewCountryCode,
+      required this.primColor,
+      required this.secoColor,
+      required this.date,
+      required this.place,
+      required this.type,
       required this.isFavorited,
       required this.rating,
-      required this.modelo});
+      required this.model});
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'imagen': imagen,
-      'marca': marca,
-      'fecha': fecha.toString(),
-      'lugar': lugar,
-      'fgColor': fgColor,
-      'bgColor': bgColor,
-      'pais': pais,
-      'tipo': tipo,
+      'brewery': brewery,
+      'brewCountry': brewCountry,
+      'brewCountryCode': brewCountryCode,
+      'date': date.toString(),
+      'place': place,
+      'primColor': primColor,
+      'secoColor': secoColor,
+      'type': type,
       'isFavorited': isFavorited,
       'rating': rating,
-      'modelo': modelo
+      'model': model
     };
   }
 
@@ -48,6 +53,6 @@ class Tapa {
   // each dog when using the print statement.
   @override
   String toString() {
-    return 'Tapa{id: $id, tipo: $tipo, marca: $marca}';
+    return 'Tapa{id: $id, tipo: $type, marca: $brewery}';
   }
 }

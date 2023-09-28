@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:tappitas/db.dart';
 import 'package:tappitas/models/tapa.dart';
+import 'package:country_picker/src/utils.dart';
 
 class Utilities {
   /// Crea la listView que carga todas las tapitas. Recibe la funcion cargaTapitas()
@@ -45,8 +46,8 @@ class Utilities {
                   return await _showConfirmationDialogToDeleteTapa(
                       context, i, tapas, callback);
                 } else {
-                  Navigator.popAndPushNamed(context, "/formtapa",
-                      arguments: tapas[i]);
+                  Navigator.pushNamed(context, "/formtapa", arguments: tapas[i])
+                      .then((_) => callback());
                 }
               },
               child: ListTile(
@@ -54,20 +55,21 @@ class Utilities {
                   TextSpan(
                     children: [
                       TextSpan(
-                        text: "${tapas[i].marca} - ",
+                        text: tapas[i].brewery,
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       TextSpan(
-                        text: tapas[i].tipo,
+                          text: tapas[i].brewCountryCode.isEmpty
+                              ? ""
+                              : " ${Utils.countryCodeToEmoji(tapas[i].brewCountryCode)}"),
+                      TextSpan(
+                        text:
+                            tapas[i].type.isEmpty ? "" : " - ${tapas[i].type}",
                       ),
                       TextSpan(
-                          text: tapas[i].pais.trim().length > 3
-                              ? " (${tapas[i].pais.trim().substring(0, 3)})"
-                              : "",
-                          style: TextStyle(fontStyle: FontStyle.italic)),
-                      TextSpan(
-                        text: " - ${tapas[i].rating}",
-                      ),
+                          text: tapas[i].rating == 0.0
+                              ? ""
+                              : "- ${tapas[i].rating}"),
                     ],
                   ),
                 ),
@@ -77,14 +79,17 @@ class Utilities {
                       : null,
                   radius: 30.0,
                 ),
-                subtitle:
-                    Text("Tomada el ${tapas[i].fecha} \nen ${tapas[i].lugar}"),
+                subtitle: tapas[i].place.isEmpty
+                    ? Text("Tomada el ${tapas[i].date}")
+                    : Text("Tomada el ${tapas[i].date} \nen ${tapas[i].place}"),
                 isThreeLine: true,
                 trailing: IconButton(
                     onPressed: () {
                       if (tapas[i].isFavorited == 0) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: const Text("Agregado a favs")));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: const Text("Agregado a favs"),
+                          showCloseIcon: true,
+                        ));
                         DB.updateFavorite(1, tapas[i].id);
                         callback();
                       } else if (tapas[i].isFavorited == 1) {
@@ -178,7 +183,7 @@ class Utilities {
 
   ///Crea la pantalla del AlertDialog para la busqueda
   Widget alertBusqueda(BuildContext context) {
-    final tipoController = TextEditingController();
+    final typeController = TextEditingController();
     final marController = TextEditingController();
     final fgColorController = TextEditingController();
     final bgColorController = TextEditingController();
@@ -198,7 +203,7 @@ class Utilities {
                   border: UnderlineInputBorder(), hintText: 'Marca'),
             ),
             TextField(
-              controller: tipoController,
+              controller: typeController,
               decoration: InputDecoration(
                   border: UnderlineInputBorder(), hintText: 'Tipo de cerveza'),
             ),
@@ -236,7 +241,7 @@ class Utilities {
                     getClausule(
                         context,
                         marController.text,
-                        tipoController.text,
+                        typeController.text,
                         paiController.text,
                         fgColorController.text,
                         bgColorController.text);

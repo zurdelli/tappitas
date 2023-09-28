@@ -7,15 +7,21 @@ import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:tappitas/provider/slider_provider.dart';
+import 'package:tappitas/screens/formTapa/widgets/color_picker/color_picker.dart';
 
-//import 'package:tappitas/screens/formTapa/widgets/dropdown_types.dart';
-import 'package:tappitas/screens/formTapa/select_photo_options_screen.dart';
+import 'package:tappitas/screens/formTapa/widgets/select_photo_options_screen.dart';
 
 import 'package:tappitas/db.dart';
 import 'package:tappitas/models/tapa.dart';
 
 import 'package:location/location.dart' as location_package;
 import 'package:geocoding/geocoding.dart' as geocoding_package;
+import 'package:tappitas/screens/formTapa/widgets/slider_widget.dart';
+
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:country_picker/country_picker.dart';
 
 //Clase que representa la pantalla con el formulario que se ve al querer crear
 //una tapa
@@ -31,14 +37,29 @@ class CreaTapa extends StatefulWidget {
 
 const List<String> listaTipos = <String>[
   'Lager',
-  'Roja',
-  'Trigo',
+  'Red',
+  'Weiss',
   'IPA/APA',
-  'Negra',
+  'Black',
   'Tostada',
-  'Gaseosa/Refresco',
-  'Sin alcohol',
-  'Otras'
+  'Alcohol Free',
+  'Soft Drink',
+  'Other'
+];
+
+const List<Color> colors = [
+  Colors.red,
+  Colors.purple,
+  Colors.indigo,
+  Colors.lightBlue,
+  Colors.green,
+  Colors.yellow,
+  Colors.amber,
+  Colors.orange,
+  Colors.brown,
+  Colors.white,
+  Colors.grey,
+  Colors.black,
 ];
 
 class _CreaTapaState extends State<CreaTapa> {
@@ -46,17 +67,32 @@ class _CreaTapaState extends State<CreaTapa> {
 
   String tapaAsStringBase64 = "";
   String selectedType = "";
+  String selectedCountry = "";
+  String selectedCountryCode = "";
   double lastRating = 0.0;
+
+  int _portraitCrossAxisCount = 3;
+  int _landscapeCrossAxisCount = 4;
+  double _borderRadius = 30;
+  double _blurRadius = 5;
+  double _iconSize = 24;
+
+  Color pickerColor = Colors.red;
+
+  void changeColor(Color color) {
+    setState(() => pickerColor = color);
+  }
+
   bool isFavorited = false;
 
-  final marcaController = TextEditingController();
-  final fechaController = TextEditingController();
-  final fgColorController = TextEditingController();
-  final bgColorController = TextEditingController();
-  final tipoController = TextEditingController();
-  final lugarController = TextEditingController();
-  final paisController = TextEditingController();
-  final modeloController = TextEditingController();
+  final breweryController = TextEditingController();
+  final dateController = TextEditingController();
+  final primColorController = TextEditingController();
+  final secoColorController = TextEditingController();
+  final typeController = TextEditingController();
+  final placeController = TextEditingController();
+  final brewCountryController = TextEditingController();
+  final modelController = TextEditingController();
 
   /// Funcion encargada de actualizar los campos de la tapa
   actualizaTapa(Tapa tapita) {
@@ -68,7 +104,7 @@ class _CreaTapaState extends State<CreaTapa> {
       }
 
       if (selectedType.isEmpty) {
-        selectedType = tapa.tipo;
+        selectedType = tapa.type;
       }
 
       if (tapa.isFavorited == 0) {
@@ -77,13 +113,15 @@ class _CreaTapaState extends State<CreaTapa> {
         isFavorited = true;
       }
 
-      marcaController.text = tapa.marca;
-      fechaController.text = tapa.fecha;
-      fgColorController.text = tapa.fgColor;
-      bgColorController.text = tapa.bgColor;
-      lugarController.text = tapa.lugar;
-      paisController.text = tapa.pais;
-      modeloController.text = tapa.modelo;
+      breweryController.text = tapa.brewery;
+      dateController.text = tapa.date;
+      if (tapa.primColor.isNotEmpty)
+        pickerColor = stringToColor(tapa.primColor);
+
+      placeController.text = tapa.place;
+      selectedCountry = tapa.brewCountry;
+      selectedCountryCode = tapa.brewCountryCode;
+      modelController.text = tapa.model;
       lastRating = tapa.rating;
     });
   }
@@ -98,49 +136,58 @@ class _CreaTapaState extends State<CreaTapa> {
 
   @override
   Widget build(BuildContext context) {
+    final myLastRating = Provider.of<SliderProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("Tapa"),
         actions: [
-          IconButton(
-            tooltip: "Favorito",
-            icon: isFavorited
-                ? const Icon(Icons.favorite)
-                : const Icon(Icons.favorite_border_outlined),
-            onPressed: () {
-              setState(() {
-                isFavorited = !isFavorited;
-              });
-            },
-          ),
-          IconButton(
-            tooltip: "Eliminar",
-            icon: const Icon(Icons.delete),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text("Eliminar"),
-                    content: Text("¿Está seguro de querer eliminar la tapa?"),
-                    actions: [
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text("Cancelar")),
-                      TextButton(
-                          onPressed: () {
-                            DB.delete(tapa);
-                            Navigator.popAndPushNamed(context, "/");
-                          },
-                          child: Text("Eliminar"))
-                    ],
-                  );
-                },
-              );
-            },
-          ),
+          TextButton.icon(
+              style: ButtonStyle(
+                  foregroundColor:
+                      MaterialStateColor.resolveWith((states) => Colors.white)),
+              onPressed: () {
+                if (CreaTapa._formKey.currentState!.validate() &&
+                    tapaAsStringBase64.isNotEmpty) {
+                  if (tapa.id! > 0) {
+                    tapa.imagen = tapaAsStringBase64;
+                    tapa.brewery = breweryController.text;
+                    tapa.primColor = colorToString(pickerColor);
+                    tapa.secoColor = colorToString(pickerColor);
+                    tapa.date = dateController.text;
+                    tapa.place = placeController.text;
+                    tapa.brewCountry = selectedCountry;
+                    tapa.brewCountryCode = selectedCountryCode;
+                    tapa.type = selectedType;
+                    tapa.isFavorited = isFavorited ? 1 : 0;
+                    tapa.rating = myLastRating.value;
+                    tapa.model = modelController.text;
+                    DB.update(tapa);
+                  } else {
+                    DB.insert(Tapa(
+                        imagen: tapaAsStringBase64,
+                        brewery: breweryController.text,
+                        primColor: colorToString(pickerColor),
+                        secoColor: colorToString(pickerColor),
+                        date: dateController.text,
+                        place: placeController.text,
+                        brewCountry: selectedCountry,
+                        brewCountryCode: selectedCountryCode,
+                        type: selectedType,
+                        isFavorited: isFavorited ? 1 : 0,
+                        rating: myLastRating.value,
+                        model: modelController.text));
+                  }
+                  Navigator.pop(context);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text("You must provide a photo"),
+                    showCloseIcon: true,
+                    behavior: SnackBarBehavior.floating,
+                  ));
+                }
+              },
+              icon: Icon(Icons.save),
+              label: Text('SAVE'))
         ],
       ),
       body: SingleChildScrollView(
@@ -166,7 +213,8 @@ class _CreaTapaState extends State<CreaTapa> {
                         child: tapaAsStringBase64.isEmpty
                             ? const Text(
                                 'No image selected',
-                                style: TextStyle(fontSize: 20),
+                                style: TextStyle(
+                                    fontSize: 20, color: Colors.black),
                               )
                             : CircleAvatar(
                                 backgroundImage: MemoryImage(
@@ -183,59 +231,29 @@ class _CreaTapaState extends State<CreaTapa> {
               ),
 
               /// Rating row
-              Row(
-                children: [
-                  Expanded(
-                    //width: 200,
+              Row(children: [
+                Expanded(
                     child: Column(
-                      //crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Rating'),
-                        Slider.adaptive(
-                          value: lastRating,
-                          onChanged: (newRating) =>
-                              {setState(() => lastRating = newRating)},
-                          min: 0,
-                          max: 5,
-                          divisions: 10,
-                          label: "$lastRating",
-                          activeColor: Colors.amber,
-                          secondaryActiveColor: Colors.white,
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-
-              /// Model & Type
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          TextFormField(
-                            controller: modeloController,
-                            textCapitalization: TextCapitalization.sentences,
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: 'Model'),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          dropDownBeerTypes(context, selectedType)
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10), Divider(), SizedBox(height: 10),
+                      Text('Rating'),
+                      Row(children: [
+                        SliderWidget(),
+                        IconButton(
+                            color: Colors.red,
+                            tooltip: "Favorito",
+                            icon: isFavorited
+                                ? const Icon(Icons.favorite)
+                                : const Icon(Icons.favorite_border_outlined),
+                            onPressed: () {
+                              setState(() {
+                                isFavorited = !isFavorited;
+                              });
+                            })
+                      ])
+                    ]))
+              ]),
 
               ///Brewery row
               Row(
@@ -256,7 +274,7 @@ class _CreaTapaState extends State<CreaTapa> {
                             height: 20,
                           ),
                           TextFormField(
-                            controller: marcaController,
+                            controller: breweryController,
                             textCapitalization: TextCapitalization.sentences,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
@@ -273,16 +291,65 @@ class _CreaTapaState extends State<CreaTapa> {
                           SizedBox(
                             height: 10,
                           ),
-                          TextFormField(
-                            controller: paisController,
-                            textCapitalization: TextCapitalization.sentences,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              label: Text('Country'),
-                            ),
-                          ),
+                          TextField(
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  prefixIcon: Icon(Icons.location_on),
+                                  labelText: "Country"),
+                              readOnly: true,
+                              onTap: () => showCountryPicker(
+                                  context: context,
+                                  onSelect: (Country country) {
+                                    selectedCountry =
+                                        country.nameLocalized ?? country.name;
+                                    selectedCountryCode = country.countryCode;
+                                  },
+                                  favorite: <String>['ES', 'DE'])),
+
+                          // GestureDetector(
+                          //   onTap: () => showCountryPicker(
+                          //       context: context,
+                          //       onSelect: (Country country) {
+                          //         selectedCountry =
+                          //             country.nameLocalized ?? country.name;
+                          //         selectedCountryCode = country.countryCode;
+                          //       },
+                          //       favorite: <String>['ES', 'DE']),
+                          //       child: Row(
+                          //         children: [
+                          //           Expanded(
+                          //             child: ),
+                          //         ],
+                          //       ),
+                          // )
                         ],
                       ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10), Divider(), SizedBox(height: 10),
+
+              /// Model & Type
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        dropDownBeerTypes(context, selectedType),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        TextFormField(
+                          controller: modelController,
+                          textCapitalization: TextCapitalization.sentences,
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(), labelText: 'Model'),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -302,10 +369,11 @@ class _CreaTapaState extends State<CreaTapa> {
                               style: TextStyle(fontSize: 20),
                               text: 'Drinked @')),
                           TextField(
-                            controller: fechaController,
+                            controller: dateController,
                             decoration: InputDecoration(
+                                border: OutlineInputBorder(),
                                 icon: Icon(Icons.calendar_today),
-                                labelText: "¿Cuando se tomó?"),
+                                labelText: "Date"),
                             readOnly: true,
                             onTap: () async {
                               DateTime? pickedDate = await showDatePicker(
@@ -323,7 +391,7 @@ class _CreaTapaState extends State<CreaTapa> {
                                 //you can implement different kind of Date Format here according to your requirement
 
                                 setState(() {
-                                  fechaController.text =
+                                  dateController.text =
                                       formattedDate; //set output date to TextField value.
                                 });
                               } else {
@@ -339,12 +407,12 @@ class _CreaTapaState extends State<CreaTapa> {
                               SizedBox(
                                 width: MediaQuery.of(context).size.width - (90),
                                 child: TextFormField(
-                                  controller: lugarController,
+                                  controller: placeController,
                                   textCapitalization:
                                       TextCapitalization.sentences,
                                   decoration: InputDecoration(
                                     icon: Icon(Icons.near_me),
-                                    labelText: 'Lugar',
+                                    labelText: 'Place',
                                   ),
                                 ),
                               ),
@@ -374,22 +442,37 @@ class _CreaTapaState extends State<CreaTapa> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: 150,
-                    child: TextField(
-                      controller: bgColorController,
-                      textCapitalization: TextCapitalization.sentences,
-                      decoration: InputDecoration(
-                        icon: Icon(Icons.color_lens_outlined),
-                        border: UnderlineInputBorder(),
-                        label: Text("1st Color"),
-                      ),
-                    ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: pickerColor,
+                        foregroundColor: pickerColor == Colors.white
+                            ? Colors.black
+                            : Colors.white),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Select a color'),
+                            content: SingleChildScrollView(
+                              child: BlockPicker(
+                                pickerColor: pickerColor,
+                                onColorChanged: changeColor,
+                                availableColors: colors,
+                                layoutBuilder: pickerLayoutBuilder,
+                                itemBuilder: pickerItemBuilder,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: Text("1st color"),
                   ),
                   SizedBox(
                     width: 150,
                     child: TextField(
-                      controller: fgColorController,
+                      controller: primColorController,
                       textCapitalization: TextCapitalization.sentences,
                       decoration: InputDecoration(
                         icon: Icon(Icons.color_lens),
@@ -404,73 +487,54 @@ class _CreaTapaState extends State<CreaTapa> {
                 height: 20,
               ),
 
-              /// Buttons row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  OutlinedButton(
-                      style: ElevatedButton.styleFrom(
-                          //backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
-                          textStyle: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w200),
-                          padding: EdgeInsetsDirectional.symmetric(
-                              horizontal: 30, vertical: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          )),
-                      onPressed: () {
-                        Navigator.popAndPushNamed(context, "/");
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MyColorPicker()));
+                  },
+                  child: Text("Cliqueame")),
+
+              OutlinedButton(
+                  style: ElevatedButton.styleFrom(
+                      //minimumSize: Size(30, 50),
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      textStyle:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                      padding: EdgeInsetsDirectional.symmetric(
+                          horizontal: 30, vertical: 10),
+                      shape: ContinuousRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      )),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context2) {
+                        return AlertDialog(
+                          title: Text("Eliminar"),
+                          content:
+                              Text("¿Está seguro de querer eliminar la tapa?"),
+                          actions: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context2);
+                                },
+                                child: Text("Cancelar")),
+                            TextButton(
+                                onPressed: () {
+                                  DB.delete(tapa);
+                                  Navigator.pop(context);
+                                  Navigator.pop(context2);
+                                },
+                                child: Text("Eliminar"))
+                          ],
+                        );
                       },
-                      child: const Text('Cancelar')),
-                  OutlinedButton(
-                      style: ElevatedButton.styleFrom(
-                          //minimumSize: Size(30, 50),
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                          textStyle: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w600),
-                          padding: EdgeInsetsDirectional.symmetric(
-                              horizontal: 30, vertical: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          )),
-                      onPressed: () {
-                        if (CreaTapa._formKey.currentState!.validate()) {
-                          if (tapa.id! > 0) {
-                            tapa.imagen = tapaAsStringBase64;
-                            tapa.marca = marcaController.text;
-                            tapa.fgColor = fgColorController.text;
-                            tapa.bgColor = bgColorController.text;
-                            tapa.fecha = fechaController.text;
-                            tapa.lugar = lugarController.text;
-                            tapa.pais = paisController.text;
-                            tapa.tipo = selectedType;
-                            tapa.isFavorited = isFavorited ? 1 : 0;
-                            tapa.rating = lastRating;
-                            tapa.modelo = modeloController.text;
-                            DB.update(tapa);
-                          } else {
-                            DB.insert(Tapa(
-                                imagen: tapaAsStringBase64,
-                                marca: marcaController.text,
-                                fgColor: fgColorController.text,
-                                bgColor: bgColorController.text,
-                                fecha: fechaController.text,
-                                lugar: lugarController.text,
-                                pais: paisController.text,
-                                tipo: selectedType,
-                                isFavorited: isFavorited ? 1 : 0,
-                                rating: lastRating,
-                                modelo: modeloController.text));
-                          }
-                          Navigator.popAndPushNamed(context, "/");
-                        }
-                      },
-                      child: const Text('Guardar')),
-                ],
-              ),
+                    );
+                  },
+                  child: const Text('Delete')),
             ],
           ),
         ),
@@ -479,7 +543,7 @@ class _CreaTapaState extends State<CreaTapa> {
   }
 
   Widget dropDownBeerTypes(BuildContext context, String valor) {
-    if (valor.isEmpty) valor = listaTipos.first;
+    if (valor.isEmpty) valor = "Lager";
 
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
@@ -540,7 +604,7 @@ class _CreaTapaState extends State<CreaTapa> {
 
     String place = "${placemarks[0].locality}, ${placemarks[0].country}";
 
-    lugarController.text = place;
+    placeController.text = place;
     //return place;
   }
 
@@ -606,5 +670,118 @@ class _CreaTapaState extends State<CreaTapa> {
             );
           }),
     );
+  }
+
+  Widget pickerLayoutBuilder(
+      BuildContext context, List<Color> colors, PickerItem child) {
+    Orientation orientation = MediaQuery.of(context).orientation;
+
+    return SizedBox(
+      width: 300,
+      height: orientation == Orientation.portrait ? 360 : 240,
+      child: GridView.count(
+        crossAxisCount: orientation == Orientation.portrait
+            ? _portraitCrossAxisCount
+            : _landscapeCrossAxisCount,
+        crossAxisSpacing: 5,
+        mainAxisSpacing: 5,
+        children: [for (Color color in colors) child(color)],
+      ),
+    );
+  }
+
+  Widget pickerItemBuilder(
+      Color color, bool isCurrentColor, void Function() changeColor) {
+    return Container(
+      margin: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(_borderRadius),
+        color: color,
+        boxShadow: [
+          BoxShadow(
+              color: color.withOpacity(0.8),
+              offset: const Offset(1, 2),
+              blurRadius: _blurRadius)
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: changeColor,
+          borderRadius: BorderRadius.circular(_borderRadius),
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 250),
+            opacity: isCurrentColor ? 1 : 0,
+            child: Icon(
+              Icons.done,
+              size: _iconSize,
+              color: useWhiteForeground(color) ? Colors.white : Colors.black,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Translates color <-> string
+  String colorToString(Color color) {
+    if (color == Colors.red) {
+      return "Red";
+    } else if (color == Colors.purple) {
+      return "Purple";
+    } else if (color == Colors.indigo) {
+      return "Blue";
+    } else if (color == Colors.lightBlue) {
+      return "LightBlue";
+    } else if (color == Colors.green) {
+      return "Green";
+    } else if (color == Colors.yellow) {
+      return "Yellow";
+    } else if (color == Colors.amber) {
+      return "Gold";
+    } else if (color == Colors.orange) {
+      return "Orange";
+    } else if (color == Colors.brown) {
+      return "Brown";
+    } else if (color == Colors.white) {
+      return "White";
+    } else if (color == Colors.grey) {
+      return "Grey";
+    } else if (color == Colors.black) {
+      return "Black";
+    } else {
+      return "";
+    }
+  }
+
+  /// Translates color <-> string
+  Color stringToColor(String color) {
+    if (color == "Red") {
+      return Colors.red;
+    } else if (color == "Purple") {
+      return Colors.purple;
+    } else if (color == "Blue") {
+      return Colors.indigo;
+    } else if (color == "LightBlue") {
+      return Colors.lightBlue;
+    } else if (color == "Green") {
+      return Colors.green;
+    } else if (color == "Yellow") {
+      return Colors.yellow;
+    } else if (color == "Gold") {
+      return Colors.amber;
+    } else if (color == "Orange") {
+      return Colors.orange;
+    } else if (color == "Brown") {
+      return Colors.brown;
+    } else if (color == "White") {
+      return Colors.white;
+    } else if (color == "Grey") {
+      return Colors.grey;
+    } else if (color == "Black") {
+      return Colors.black;
+    } else {
+      return Colors.black;
+    }
   }
 }

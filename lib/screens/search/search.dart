@@ -2,8 +2,8 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:tappitas/models/tapa.dart';
 import 'package:tappitas/db.dart';
-import 'package:tappitas/screens/widgets/app_bar.dart';
-import 'package:tappitas/screens/widgets/utilities.dart';
+import 'package:tappitas/screens/library/widgets/app_bar.dart';
+import 'package:tappitas/utilities.dart';
 
 class Busqueda extends StatelessWidget {
   @override

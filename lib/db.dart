@@ -11,9 +11,9 @@ class DB {
     return openDatabase(join(await getDatabasesPath(), '$tabla.db'),
         onCreate: (db, version) {
       return db.execute(
-        "CREATE TABLE $tabla (id INTEGER PRIMARY KEY, imagen BLOB, marca TEXT, "
-        "fecha TEXT, lugar TEXT, fgColor TEXT, bgColor TEXT, pais TEXT,"
-        " tipo TEXT, isFavorited INTEGER, rating REAL, modelo TEXT)",
+        "CREATE TABLE $tabla (id INTEGER PRIMARY KEY, imagen BLOB, brewery TEXT, "
+        "date TEXT, place TEXT, primColor TEXT, secoColor TEXT, brewCountry TEXT,"
+        "brewCountryCode TEXT, type TEXT, isFavorited INTEGER, rating REAL, model TEXT)",
       );
     }, version: 1);
   }
@@ -63,16 +63,17 @@ class DB {
         (i) => Tapa(
             id: tapasMap[i]['id'],
             imagen: tapasMap[i]['imagen'],
-            marca: tapasMap[i]['marca'],
-            fecha: tapasMap[i]['fecha'],
-            lugar: tapasMap[i]['lugar'],
-            fgColor: tapasMap[i]['fgColor'],
-            bgColor: tapasMap[i]['bgColor'],
-            pais: tapasMap[i]['pais'],
-            tipo: tapasMap[i]['tipo'],
+            brewery: tapasMap[i]['brewery'],
+            date: tapasMap[i]['date'],
+            place: tapasMap[i]['place'],
+            primColor: tapasMap[i]['primColor'],
+            secoColor: tapasMap[i]['secoColor'],
+            brewCountry: tapasMap[i]['brewCountry'],
+            brewCountryCode: tapasMap[i]['brewCountryCode'],
+            type: tapasMap[i]['type'],
             isFavorited: tapasMap[i]['isFavorited'],
             rating: tapasMap[i]['rating'],
-            modelo: tapasMap[i]['modelo']));
+            model: tapasMap[i]['model']));
   }
 
   static Future<List<Tapa>> busquedaTapas(
@@ -85,7 +86,7 @@ class DB {
 
     final List<Map<String, dynamic>> busquedaMap = await db.query(tabla,
         where:
-            "marca LIKE ? AND tipo LIKE ? AND pais LIKE ? AND fgColor LIKE ? AND bgColor LIKE ?",
+            "brewery LIKE ? AND type LIKE ? AND brewCountry LIKE ? AND primColor LIKE ? AND secoColor LIKE ?",
         whereArgs: [
           marClausula,
           tipClausula,
@@ -99,16 +100,17 @@ class DB {
         (i) => Tapa(
             id: busquedaMap[i]['id'],
             imagen: busquedaMap[i]['imagen'],
-            marca: busquedaMap[i]['marca'],
-            fecha: busquedaMap[i]['fecha'],
-            lugar: busquedaMap[i]['lugar'],
-            fgColor: busquedaMap[i]['fgColor'],
-            bgColor: busquedaMap[i]['bgColor'],
-            pais: busquedaMap[i]['pais'],
-            tipo: busquedaMap[i]['tipo'],
+            brewery: busquedaMap[i]['brewery'],
+            date: busquedaMap[i]['date'],
+            place: busquedaMap[i]['place'],
+            primColor: busquedaMap[i]['primColor'],
+            secoColor: busquedaMap[i]['secoColor'],
+            brewCountry: busquedaMap[i]['brewCountry'],
+            brewCountryCode: busquedaMap[i]['brewCountryCode'],
+            type: busquedaMap[i]['type'],
             isFavorited: busquedaMap[i]['isFavorited'],
             rating: busquedaMap[i]['rating'],
-            modelo: busquedaMap[i]['modelo']));
+            model: busquedaMap[i]['model']));
   }
 
   static Future<List<Map<String, Object?>>> gimmeSomeData(
@@ -119,16 +121,6 @@ class DB {
         "SELECT $parameter, COUNT(*) FROM $tabla GROUP BY $parameter";
 
     final List<Map<String, Object?>> busquedaMap = await db.rawQuery(sentencia);
-
-    //Map<String, Object?> returnMap = {};
-
-    //int counter = 0;
-
-    // for (var e in busquedaMap) {
-    //   returnMap.addAll(e);
-    // }
-
-    //print(returnMap);
 
     return busquedaMap;
   }

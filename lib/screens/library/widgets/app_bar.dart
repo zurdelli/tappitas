@@ -1,9 +1,6 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:tappitas/db.dart';
-import 'package:tappitas/models/tapa.dart';
-import 'package:tappitas/screens/widgets/utilities.dart';
+import 'package:tappitas/utilities.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MyAppBar({required this.titulo});

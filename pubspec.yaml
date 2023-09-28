@@ -25,6 +25,9 @@ dependencies:
   shared_preferences: ^2.0.15
   location: ^5.0.0
   geocoding: ^2.1.0
+  flutter_colorpicker:
+  country_picker: 
+  google_fonts:
 
 dev_dependencies:
   flutter_test:

@@ -29,9 +29,10 @@ com.example.tappitas.app-mergeDebugResources-27 D:\Documentos\Cursos\Flutter\tap
 com.example.tappitas.app-mergeDebugResources-28 D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\app\intermediates\incremental\debug\mergeDebugResources\stripped.dir
 com.example.tappitas.app-merged_res-29 D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\app\intermediates\merged_res\debug
 com.example.tappitas.app-packaged_res-30 D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\flutter_plugin_android_lifecycle\intermediates\packaged_res\debug
-com.example.tappitas.app-packaged_res-31 D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\image_cropper\intermediates\packaged_res\debug
-com.example.tappitas.app-packaged_res-32 D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\image_picker_android\intermediates\packaged_res\debug
-com.example.tappitas.app-packaged_res-33 D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\location\intermediates\packaged_res\debug
-com.example.tappitas.app-packaged_res-34 D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\path_provider_android\intermediates\packaged_res\debug
-com.example.tappitas.app-packaged_res-35 D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\shared_preferences_android\intermediates\packaged_res\debug
-com.example.tappitas.app-packaged_res-36 D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\sqflite\intermediates\packaged_res\debug
+com.example.tappitas.app-packaged_res-31 D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\geocoding_android\intermediates\packaged_res\debug
+com.example.tappitas.app-packaged_res-32 D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\image_cropper\intermediates\packaged_res\debug
+com.example.tappitas.app-packaged_res-33 D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\image_picker_android\intermediates\packaged_res\debug
+com.example.tappitas.app-packaged_res-34 D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\location\intermediates\packaged_res\debug
+com.example.tappitas.app-packaged_res-35 D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\path_provider_android\intermediates\packaged_res\debug
+com.example.tappitas.app-packaged_res-36 D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\shared_preferences_android\intermediates\packaged_res\debug
+com.example.tappitas.app-packaged_res-37 D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\sqflite\intermediates\packaged_res\debug

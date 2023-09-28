@@ -1,16 +1,16 @@
-# tappitas
+# T*app*itas
 
-A new Flutter project.
+**Tappitas** is an Android app to manage a collection of beer caps (or whatever drink who use a cap). 
+The name comes from Latin Spanish, who calls a cap *tapita*. The idea to make this project comes from my desire of manage [my collection of caps](https://www.instagram.com/p/Cv7x6cFrzBr/?img_index=1). This is a test project, so it could have many bugs.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+- Download the apk
 
-A few resources to get you started if this is your first Flutter project:
+## to-do
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Create colors gamma
+- Translate according to phone's language
+- Posibility to create another collections (i.e clothes collections)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Screenshots
