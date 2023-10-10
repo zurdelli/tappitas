@@ -115,8 +115,9 @@ class _CreaTapaState extends State<CreaTapa> {
 
       breweryController.text = tapa.brewery;
       dateController.text = tapa.date;
-      if (tapa.primColor.isNotEmpty)
+      if (tapa.primColor.isNotEmpty) {
         pickerColor = stringToColor(tapa.primColor);
+      }
 
       placeController.text = tapa.place;
       selectedCountry = tapa.brewCountry;

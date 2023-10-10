@@ -104,17 +104,17 @@ class _HSVColorPickerExampleState extends State<HSVColorPickerExample> {
                   },
                 );
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: widget.pickerColor,
+                shadowColor: widget.pickerColor.withOpacity(1),
+                elevation: 10,
+              ),
               child: Text(
                 'Color Picker with Slider',
                 style: TextStyle(
                     color: useWhiteForeground(widget.pickerColor)
                         ? Colors.white
                         : Colors.black),
-              ),
-              style: ElevatedButton.styleFrom(
-                primary: widget.pickerColor,
-                shadowColor: widget.pickerColor.withOpacity(1),
-                elevation: 10,
               ),
             ),
             const SizedBox(width: 20),
@@ -151,15 +151,15 @@ ColorPicker(
                   },
                 );
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: widget.pickerColor,
+                shadowColor: widget.pickerColor.withOpacity(1),
+                elevation: 10,
+              ),
               child: Icon(Icons.code,
                   color: useWhiteForeground(widget.pickerColor)
                       ? Colors.white
                       : Colors.black),
-              style: ElevatedButton.styleFrom(
-                primary: widget.pickerColor,
-                shadowColor: widget.pickerColor.withOpacity(1),
-                elevation: 10,
-              ),
             ),
           ],
         ),
@@ -293,17 +293,17 @@ ColorPicker(
                   },
                 );
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: widget.pickerColor,
+                shadowColor: widget.pickerColor.withOpacity(1),
+                elevation: 10,
+              ),
               child: Text(
                 'Hue Ring Picker with Hex Input',
                 style: TextStyle(
                     color: useWhiteForeground(widget.pickerColor)
                         ? Colors.white
                         : Colors.black),
-              ),
-              style: ElevatedButton.styleFrom(
-                primary: widget.pickerColor,
-                shadowColor: widget.pickerColor.withOpacity(1),
-                elevation: 10,
               ),
             ),
             const SizedBox(width: 20),
@@ -329,15 +329,15 @@ HueRingPicker(
                   },
                 );
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: widget.pickerColor,
+                shadowColor: widget.pickerColor.withOpacity(1),
+                elevation: 10,
+              ),
               child: Icon(Icons.code,
                   color: useWhiteForeground(widget.pickerColor)
                       ? Colors.white
                       : Colors.black),
-              style: ElevatedButton.styleFrom(
-                primary: widget.pickerColor,
-                shadowColor: widget.pickerColor.withOpacity(1),
-                elevation: 10,
-              ),
             ),
           ],
         ),
@@ -386,17 +386,17 @@ HueRingPicker(
                   },
                 );
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: widget.pickerColor,
+                shadowColor: widget.pickerColor.withOpacity(1),
+                elevation: 10,
+              ),
               child: Text(
                 'Slider-only Color Picker',
                 style: TextStyle(
                     color: useWhiteForeground(widget.pickerColor)
                         ? Colors.white
                         : Colors.black),
-              ),
-              style: ElevatedButton.styleFrom(
-                primary: widget.pickerColor,
-                shadowColor: widget.pickerColor.withOpacity(1),
-                elevation: 10,
               ),
             ),
             const SizedBox(width: 20),
@@ -426,15 +426,15 @@ SlidePicker(
                   },
                 );
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: widget.pickerColor,
+                shadowColor: widget.pickerColor.withOpacity(1),
+                elevation: 10,
+              ),
               child: Icon(Icons.code,
                   color: useWhiteForeground(widget.pickerColor)
                       ? Colors.white
                       : Colors.black),
-              style: ElevatedButton.styleFrom(
-                primary: widget.pickerColor,
-                shadowColor: widget.pickerColor.withOpacity(1),
-                elevation: 10,
-              ),
             ),
           ],
         ),
@@ -559,17 +559,17 @@ SlidePicker(
                   },
                 );
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: widget.pickerColor,
+                shadowColor: widget.pickerColor.withOpacity(1),
+                elevation: 10,
+              ),
               child: Text(
                 '  HSV Color Picker\n(Your own text field)',
                 style: TextStyle(
                     color: useWhiteForeground(widget.pickerColor)
                         ? Colors.white
                         : Colors.black),
-              ),
-              style: ElevatedButton.styleFrom(
-                primary: widget.pickerColor,
-                shadowColor: widget.pickerColor.withOpacity(1),
-                elevation: 10,
               ),
             ),
             const SizedBox(width: 20),
@@ -626,15 +626,15 @@ Column(
                   },
                 );
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: widget.pickerColor,
+                shadowColor: widget.pickerColor.withOpacity(1),
+                elevation: 10,
+              ),
               child: Icon(Icons.code,
                   color: useWhiteForeground(widget.pickerColor)
                       ? Colors.white
                       : Colors.black),
-              style: ElevatedButton.styleFrom(
-                primary: widget.pickerColor,
-                shadowColor: widget.pickerColor.withOpacity(1),
-                elevation: 10,
-              ),
             ),
           ],
         ),

@@ -12,6 +12,7 @@ class ColorContainer extends StatefulWidget {
 
 class _ColorContainerState extends State<ColorContainer> {
   bool selected = false;
+  bool isFinished = false;
   Future<List<Map<String, Object?>>>? listaColores;
 
   @override
@@ -29,9 +30,8 @@ class _ColorContainerState extends State<ColorContainer> {
               child: AnimatedContainer(
                   width: 400,
                   height: selected ? 200 : 50,
-                  //color: Colors.blue,
-                  alignment: AlignmentDirectional.bottomStart,
-                  duration: const Duration(seconds: 2),
+                  color: Color.fromARGB(0, 255, 255, 255),
+                  duration: const Duration(seconds: 1),
                   curve: Curves.fastOutSlowIn,
                   padding: EdgeInsets.all(10),
                   child: Column(
@@ -55,8 +55,7 @@ class _ColorContainerState extends State<ColorContainer> {
                                 //Map result = {};
                                 //List lista2 = [];
                                 StringBuffer myString = StringBuffer();
-                                lista.forEach(
-                                  (element) {
+                                for (var element in lista) {
                                     // element es un mapa
                                     myString.write("\n");
                                     //element.forEach((k, v) => lista2.add(v));
@@ -65,8 +64,7 @@ class _ColorContainerState extends State<ColorContainer> {
                                           ? myString.write("undefined ")
                                           : myString.write("$v ");
                                     });
-                                  },
-                                );
+                                  }
 
                                 return Text(
                                     style: TextStyle(fontSize: 20),

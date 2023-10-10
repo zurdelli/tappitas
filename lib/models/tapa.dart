@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 /// Modelo de la tapa
 class Tapa {
   int? id;
