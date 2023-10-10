@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:tappitas/utilities.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const MyAppBar({required this.titulo});
+  const MyAppBar({required this.titulo, required this.cantidad});
   final String titulo;
+  final int cantidad;
 
   @override
   Widget build(BuildContext context) {
@@ -16,10 +17,8 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
             icon: const Icon(Icons.search),
             tooltip: 'Buscar'),
         IconButton(
-          onPressed: () => Navigator.pushNamed(
-            context,
-            "/statistics",
-          ),
+          onPressed: () =>
+              Navigator.pushNamed(context, "/statistics", arguments: cantidad),
           icon: Icon(Icons.filter_list),
         ),
         IconButton(

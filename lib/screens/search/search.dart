@@ -5,20 +5,12 @@ import 'package:tappitas/db.dart';
 import 'package:tappitas/screens/library/widgets/app_bar.dart';
 import 'package:tappitas/utilities.dart';
 
-class Busqueda extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: MyAppBar(titulo: "Búsqueda"), body: ListaBusqueda());
-  }
-}
-
-class ListaBusqueda extends StatefulWidget {
+class Busqueda extends StatefulWidget {
   @override
   _ListaBusquedaState createState() => _ListaBusquedaState();
 }
 
-class _ListaBusquedaState extends State<ListaBusqueda> {
+class _ListaBusquedaState extends State<Busqueda> {
   List<Tapa> tapitas = [];
   List<String> clausulas = [];
 
@@ -48,7 +40,13 @@ class _ListaBusquedaState extends State<ListaBusqueda> {
 
   @override
   Widget build(BuildContext context) {
-    return Utilities()
-        .createListview(context, tapitas, helperMethodToGetTapitas);
+    return Scaffold(
+      appBar: MyAppBar(
+        titulo: "Search",
+        cantidad: tapitas.length,
+      ),
+      body: Utilities()
+          .createListview(context, tapitas, helperMethodToGetTapitas),
+    );
   }
 }

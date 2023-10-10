@@ -36,7 +36,7 @@ class _ListaState extends State<Lista> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: MyAppBar(titulo: "Tappitas"),
+        appBar: MyAppBar(titulo: "Tappitas", cantidad: tapitas.length),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () {
@@ -57,6 +57,7 @@ class _ListaState extends State<Lista> {
                         isFavorited: 0,
                         rating: 0.0,
                         model: ''))
+                // Necesario para el reload de la listview
                 .then((_) => cargaTapitas());
           },
         ),

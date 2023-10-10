@@ -22,7 +22,7 @@ class MiHome extends StatelessWidget {
           "/": (context) => Lista(),
           "/formtapa": (context) => CreaTapa(),
           "/busqtapa": (context) => Busqueda(),
-          "/statistics": (context) => Statistics(),
+          "/statistics": (context) => Steps(),
         },
         theme: ThemeData(
           useMaterial3: true,
