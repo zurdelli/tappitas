@@ -77,7 +77,7 @@ class _CreaTapaState extends State<CreaTapa> {
   double _blurRadius = 5;
   double _iconSize = 24;
 
-  Color pickerColor = Colors.red;
+  Color pickerColor = Colors.transparent;
 
   void changeColor(Color color) {
     setState(() => pickerColor = color);
