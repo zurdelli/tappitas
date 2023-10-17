@@ -32,7 +32,7 @@ class _ListaBusquedaState extends State<Busqueda> {
   /// Tuve que crear este metodo para el setState ya que si lo hacia directamente
   /// en buscaTapitas() no me lo permitia (no se por que)
   helperMethodToGetTapitas(List<String> clausula) async {
-    var tappas = await buscaTapitas(clausula);
+    List<Tapa> tappas = await buscaTapitas(clausula);
     setState(() {
       tapitas = tappas;
     });
@@ -44,9 +44,10 @@ class _ListaBusquedaState extends State<Busqueda> {
       appBar: MyAppBar(
         titulo: "Search",
         cantidad: tapitas.length,
+        callback: helperMethodToGetTapitas(
+            ModalRoute.of(context)!.settings.arguments as List<String>),
       ),
-      body: Utilities()
-          .createListview(context, tapitas, helperMethodToGetTapitas),
+      body: createListview(context, tapitas, helperMethodToGetTapitas),
     );
   }
 }

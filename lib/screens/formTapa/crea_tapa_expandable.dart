@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:ffi';
+//import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -10,7 +10,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tappitas/provider/slider_provider.dart';
-import 'package:tappitas/screens/formTapa/widgets/color_picker/color_picker.dart';
 
 import 'package:tappitas/screens/formTapa/widgets/select_photo_options_screen.dart';
 
@@ -23,6 +22,8 @@ import 'package:tappitas/screens/formTapa/widgets/slider_widget.dart';
 
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:country_picker/country_picker.dart';
+import 'package:tappitas/utilities.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 //Clase que representa la pantalla con el formulario que se ve al querer crear
 //una tapa
@@ -45,21 +46,6 @@ const List<String> listaTipos = <String>[
   'Other'
 ];
 
-const List<Color> colors = [
-  Colors.red,
-  Colors.purple,
-  Colors.indigo,
-  Colors.lightBlue,
-  Colors.green,
-  Colors.yellow,
-  Colors.amber,
-  Colors.orange,
-  Colors.brown,
-  Colors.white,
-  Colors.grey,
-  Colors.black,
-];
-
 class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
   late Tapa tapa;
 
@@ -79,18 +65,24 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
   double _blurRadius = 5;
   double _iconSize = 24;
 
-  Color pickerColor = Colors.transparent;
+  Color pickFirstColor = Colors.transparent;
+  Color pickSecondColor = Colors.transparent;
 
-  void changeColor(Color color) {
-    setState(() => pickerColor = color);
+  void changeFirstColor(Color color) {
+    setState(() => pickFirstColor = color);
   }
+
+  void changeSecondColor(Color color) {
+    setState(() => pickSecondColor = color);
+  }
+
+  final primColorController = TextEditingController();
+  final secoColorController = TextEditingController();
 
   bool isFavorited = false;
 
   final breweryController = TextEditingController();
   final dateController = TextEditingController();
-  final primColorController = TextEditingController();
-  final secoColorController = TextEditingController();
   final typeController = TextEditingController();
   final placeController = TextEditingController();
   final brewCountryController = TextEditingController();
@@ -118,11 +110,15 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
       breweryController.text = tapa.brewery;
       dateController.text = tapa.date;
       if (tapa.primColor.isNotEmpty) {
-        pickerColor = stringToColor(tapa.primColor);
+        pickFirstColor = stringToColor(tapa.primColor);
+      }
+
+      if (tapa.secoColor.isNotEmpty) {
+        pickSecondColor = stringToColor(tapa.secoColor);
       }
 
       placeController.text = tapa.place;
-      selectedCountry = tapa.brewCountry;
+      brewCountryController.text = selectedCountry = tapa.brewCountry;
       selectedCountryCode = tapa.brewCountryCode;
       modelController.text = tapa.model;
       lastRating = tapa.rating;
@@ -179,66 +175,66 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
-            if (!isFavorited) {
-              setState(() {
-                openRadio = 2;
-              });
-            } else {
-              if (tapaAsStringBase64.isNotEmpty) {
-                if (tapa.id! > 0) {
-                  tapa.imagen = tapaAsStringBase64;
-                  tapa.brewery = breweryController.text;
-                  tapa.primColor = colorToString(pickerColor);
-                  tapa.secoColor = colorToString(pickerColor);
-                  tapa.date = dateController.text;
-                  tapa.place = placeController.text;
-                  tapa.brewCountry = selectedCountry;
-                  tapa.brewCountryCode = selectedCountryCode;
-                  tapa.type = selectedType;
-                  tapa.isFavorited = isFavorited ? 1 : 0;
-                  tapa.rating = myLastRating.value;
-                  tapa.model = modelController.text;
-                  DB.update(tapa);
-                } else {
-                  DB.insert(Tapa(
-                      imagen: tapaAsStringBase64,
-                      brewery: breweryController.text,
-                      primColor: colorToString(pickerColor),
-                      secoColor: colorToString(pickerColor),
-                      date: dateController.text,
-                      place: placeController.text,
-                      brewCountry: selectedCountry,
-                      brewCountryCode: selectedCountryCode,
-                      type: selectedType,
-                      isFavorited: isFavorited ? 1 : 0,
-                      rating: myLastRating.value,
-                      model: modelController.text));
-                }
-                Navigator.pop(context);
+            // if (!isFavorited) {
+            //   setState(() {
+            //     _isOpen[2] = true;
+            //   });
+            // } else {
+            if (tapaAsStringBase64.isNotEmpty) {
+              if (tapa.id! > 0) {
+                tapa.imagen = tapaAsStringBase64;
+                tapa.brewery = breweryController.text;
+                tapa.primColor = colorToString(pickFirstColor);
+                tapa.secoColor = colorToString(pickSecondColor);
+                tapa.date = dateController.text;
+                tapa.place = placeController.text;
+                tapa.brewCountry = selectedCountry;
+                tapa.brewCountryCode = selectedCountryCode;
+                tapa.type = selectedType;
+                tapa.isFavorited = isFavorited ? 1 : 0;
+                tapa.rating = myLastRating.value;
+                tapa.model = modelController.text;
+                DB.update(tapa);
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text("You must provide a photo"),
-                  showCloseIcon: true,
-                  behavior: SnackBarBehavior.floating,
-                ));
+                DB.insert(Tapa(
+                    imagen: tapaAsStringBase64,
+                    brewery: breweryController.text,
+                    primColor: colorToString(pickFirstColor),
+                    secoColor: colorToString(pickSecondColor),
+                    date: dateController.text,
+                    place: placeController.text,
+                    brewCountry: selectedCountry,
+                    brewCountryCode: selectedCountryCode,
+                    type: selectedType,
+                    isFavorited: isFavorited ? 1 : 0,
+                    rating: myLastRating.value,
+                    model: modelController.text));
               }
+              Navigator.pop(context);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text("You must provide a photo"),
+                showCloseIcon: true,
+                behavior: SnackBarBehavior.floating,
+              ));
+              setState(() {
+                _isOpen[0] = true;
+              });
             }
+            // }
           },
-          child: tapaAsStringBase64.isEmpty
-              ? Icon(Icons.arrow_forward)
-              : Icon(Icons.save)),
+          child: Icon(Icons.save)),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: SingleChildScrollView(
         //padding: const EdgeInsets.all(16.0),
         child: ExpansionPanelList.radio(
-          initialOpenPanelValue: openRadio,
+          initialOpenPanelValue: 1,
           animationDuration: const Duration(milliseconds: 500),
-
-          // expansionCallback: (int index, bool isExpanded) {
-          //   setState(() {
-          //     _isOpen[index] = isExpanded;
-          //   });
-          // },
+          expansionCallback: (int index, bool isExpanded) {
+            setState(() {
+              _isOpen[index] = isExpanded;
+            });
+          },
           children: [
             ExpansionPanelRadio(
               value: 1,
@@ -281,66 +277,84 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
               ),
             ),
             ExpansionPanelRadio(
+              //isExpanded: _isOpen[1],
               value: 2,
               canTapOnHeader: true,
               headerBuilder: ((context, isExpanded) => ListTile(
                     title: Text("Brewery"),
+                    leading: brewCountryController.text.isNotEmpty &&
+                            breweryController.text.isNotEmpty
+                        ? Icon(Icons.done)
+                        : Icon(Icons.remove),
                   )),
-              body: Row(
-                ///Brewery row
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
+              body: Column(
                 children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          //Text.rich(TextSpan(
-                          //    style: TextStyle(fontSize: 20), text: 'Brewery')),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          TextFormField(
-                            controller: breweryController,
-                            textCapitalization: TextCapitalization.sentences,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Name',
-                              focusColor: Colors.black,
+                  Row(
+                    ///Brewery row
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 5,
                             ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          TextField(
+                            TextField(
+                              controller: breweryController,
+                              textCapitalization: TextCapitalization.sentences,
                               decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  prefixIcon: Icon(Icons.location_on),
-                                  labelText: "Country"),
-                              readOnly: true,
-                              onTap: () => showCountryPicker(
-                                  context: context,
-                                  onSelect: (Country country) {
-                                    selectedCountry =
-                                        country.nameLocalized ?? country.name;
-                                    selectedCountryCode = country.countryCode;
-                                  },
-                                  favorite: <String>['ES', 'DE'])),
-                        ],
+                                border: OutlineInputBorder(),
+                                labelText: 'Name',
+                                focusColor: Colors.black,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            TextField(
+                                controller: brewCountryController,
+                                decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    prefixIcon: Icon(Icons.location_on),
+                                    labelText: "Country",
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        Icons.search,
+                                      ),
+                                      onPressed: () {
+                                        _launchUrl(breweryController.text);
+                                      },
+                                    )),
+                                readOnly: true,
+                                onTap: () => showCountryPicker(
+                                    context: context,
+                                    onSelect: (Country country) {
+                                      brewCountryController.text =
+                                          selectedCountry =
+                                              country.nameLocalized ??
+                                                  country.name;
+                                      selectedCountryCode = country.countryCode;
+                                    },
+                                    favorite: <String>['ES', 'DE'])),
+                          ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),
             ),
             ExpansionPanelRadio(
               value: 3,
+              //isExpanded: _isOpen[2],
               canTapOnHeader: true,
               headerBuilder: ((context, isExpanded) => ListTile(
-                    title: Text("Photo"),
+                    title: Text("Type & Model"),
+                    leading: selectedType.isNotEmpty
+                        ? Icon(Icons.done)
+                        : Icon(Icons.remove),
                   )),
               body:
 
@@ -350,82 +364,55 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        dropDownBeerTypes(context, selectedType),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        TextFormField(
-                          controller: modelController,
-                          textCapitalization: TextCapitalization.sentences,
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(), labelText: 'Model'),
-                        ),
-                      ],
+                    flex: 1,
+                    child: dropDownBeerTypes(context, selectedType),
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: TextFormField(
+                      controller: modelController,
+                      textCapitalization: TextCapitalization.sentences,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Model (optional)'),
                     ),
                   ),
                 ],
               ),
             ),
             ExpansionPanelRadio(
-              value: 4,
-              canTapOnHeader: true,
-              headerBuilder: ((context, isExpanded) => ListTile(
-                    title: Text("Rating"),
-                  )),
-              body:
-
-                  /// Rating row
-                  Row(children: [
-                Expanded(
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                      Text('Rating'),
-                      Row(children: [
-                        SliderWidget(),
-                        IconButton(
-                            color: Colors.red,
-                            tooltip: "Favorito",
-                            icon: isFavorited
-                                ? const Icon(Icons.favorite)
-                                : const Icon(Icons.favorite_border_outlined),
-                            onPressed: () {
-                              setState(() {
-                                isFavorited = !isFavorited;
-                              });
-                            })
-                      ])
-                    ]))
-              ]),
-            ),
-            ExpansionPanelRadio(
               //isExpanded: _isOpen[4],
+
               canTapOnHeader: true,
-              value: 5,
+              value: 4,
               headerBuilder: ((context, isExpanded) => ListTile(
                     title: Text("Drinked @"),
+                    leading: dateController.text.isNotEmpty &&
+                            placeController.text.isNotEmpty
+                        ? Icon(Icons.done)
+                        : Icon(Icons.remove),
                   )),
-              body:
-
-                  /// Drinked @ row
-                  Row(
+              body: Row(
+                // Drinked @ row
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Column(
                       children: [
-                        Text.rich(TextSpan(
-                            style: TextStyle(fontSize: 20), text: 'Drinked @')),
+                        // Text.rich(TextSpan(
+                        //     style: TextStyle(fontSize: 20), text: 'Drinked @')),
+                        SizedBox(
+                          height: 5,
+                        ),
                         TextField(
                           controller: dateController,
                           decoration: InputDecoration(
                               border: OutlineInputBorder(),
-                              icon: Icon(Icons.calendar_today),
+                              prefixIcon: Icon(Icons.calendar_today),
                               labelText: "Date"),
                           readOnly: true,
                           onTap: () async {
@@ -455,32 +442,22 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
                         SizedBox(
                           height: 10,
                         ),
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width - (90),
-                              child: TextFormField(
-                                controller: placeController,
-                                textCapitalization:
-                                    TextCapitalization.sentences,
-                                decoration: InputDecoration(
-                                  icon: Icon(Icons.near_me),
-                                  labelText: 'Place',
-                                ),
-                              ),
+                        TextField(
+                          controller: placeController,
+                          textCapitalization: TextCapitalization.sentences,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.near_me),
+                            suffixIcon: IconButton(
+                              color: Colors.blue,
+                              //alignment: Alignment.centerRight,
+                              icon: Icon(Icons.gps_fixed),
+                              onPressed: () {
+                                getLocation();
+                              },
                             ),
-                            SizedBox(
-                              //width: 50,
-                              child: IconButton(
-                                color: Colors.blue,
-                                alignment: Alignment.centerRight,
-                                icon: Icon(Icons.gps_fixed),
-                                onPressed: () {
-                                  getLocation();
-                                },
-                              ),
-                            )
-                          ],
+                            labelText: 'Place',
+                          ),
                         ),
                       ],
                     ),
@@ -492,106 +469,191 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
               // Colors
               //isExpanded: _isOpen[5],
               canTapOnHeader: true,
-              value: 6,
+              value: 5,
               headerBuilder: ((context, isExpanded) => ListTile(
                     title: Text("Colors"),
+                    leading: pickFirstColor != Colors.transparent &&
+                            pickSecondColor != Colors.transparent
+                        ? Icon(Icons.done)
+                        : Icon(Icons.remove),
                   )),
               body: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: pickerColor,
-                        foregroundColor: pickerColor == Colors.white
-                            ? Colors.black
-                            : Colors.white),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Select a color'),
-                            content: SingleChildScrollView(
-                              child: BlockPicker(
-                                pickerColor: pickerColor,
-                                onColorChanged: changeColor,
-                                availableColors: colors,
-                                layoutBuilder: pickerLayoutBuilder,
-                                itemBuilder: pickerItemBuilder,
+                  Expanded(
+                    flex: 1,
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                          //minimumSize: Size(160, 60),
+                          shape: ContinuousRectangleBorder(),
+                          side: BorderSide(color: Colors.white, width: 0.5),
+                          backgroundColor: pickFirstColor,
+                          foregroundColor: pickFirstColor == Colors.white
+                              ? Colors.black
+                              : Colors.white),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Select a color'),
+                              content: SingleChildScrollView(
+                                child: BlockPicker(
+                                  pickerColor: pickFirstColor,
+                                  onColorChanged: changeFirstColor,
+                                  availableColors: colors,
+                                  layoutBuilder: pickerLayoutBuilder,
+                                  itemBuilder: pickerItemBuilder,
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    child: Text("1st color"),
+                            );
+                          },
+                        );
+                      },
+                      child: Text.rich(
+                        TextSpan(
+                          children: [
+                            WidgetSpan(child: Icon(Icons.color_lens)),
+                            TextSpan(
+                                text: colorToString(pickFirstColor).isEmpty
+                                    ? '1st color'
+                                    : colorToString(pickFirstColor))
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                  SizedBox(
-                    width: 150,
-                    child: TextField(
-                      controller: primColorController,
-                      textCapitalization: TextCapitalization.sentences,
-                      decoration: InputDecoration(
-                        icon: Icon(Icons.color_lens),
-                        label: Text("2nd Color"),
-                        border: UnderlineInputBorder(),
+                  Expanded(
+                    flex: 1,
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                          //minimumSize: Size(160, 60),
+                          shape: ContinuousRectangleBorder(),
+                          side: BorderSide(color: Colors.white, width: 0.5),
+                          backgroundColor: pickSecondColor,
+                          foregroundColor: pickSecondColor == Colors.white
+                              ? Colors.black
+                              : Colors.white),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Select a color'),
+                              content: SingleChildScrollView(
+                                child: BlockPicker(
+                                  pickerColor: pickSecondColor,
+                                  onColorChanged: changeSecondColor,
+                                  availableColors: colors,
+                                  layoutBuilder: pickerLayoutBuilder,
+                                  itemBuilder: pickerItemBuilder,
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      child: Text.rich(
+                        TextSpan(
+                          children: [
+                            WidgetSpan(child: Icon(Icons.color_lens)),
+                            TextSpan(
+                                text: colorToString(pickSecondColor).isEmpty
+                                    ? '2nd color'
+                                    : colorToString(pickSecondColor))
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-          ],
-          // ElevatedButton(
-          //     onPressed: () {
-          //       Navigator.push(
-          //           context,
-          //           MaterialPageRoute(
-          //               builder: (context) => MyColorPicker()));
-          //     },
-          //     child: Text("Cliqueame")),
+            ExpansionPanelRadio(
+              value: 6,
+              //isExpanded: _isOpen[3],
+              canTapOnHeader: true,
+              headerBuilder: ((context, isExpanded) => ListTile(
+                    title: Text("Rate me"),
+                  )),
+              body:
 
-          // OutlinedButton(
-          //     style: ElevatedButton.styleFrom(
-          //         //minimumSize: Size(30, 50),
-          //         backgroundColor: Colors.red,
-          //         foregroundColor: Colors.white,
-          //         textStyle:
-          //             TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-          //         padding: EdgeInsetsDirectional.symmetric(
-          //             horizontal: 30, vertical: 10),
-          //         shape: ContinuousRectangleBorder(
-          //           borderRadius: BorderRadius.circular(15),
-          //         )),
-          //     onPressed: () {
-          //       showDialog(
-          //         context: context,
-          //         builder: (BuildContext context2) {
-          //           return AlertDialog(
-          //             title: Text("Eliminar"),
-          //             content:
-          //                 Text("¿Está seguro de querer eliminar la tapa?"),
-          //             actions: [
-          //               TextButton(
-          //                   onPressed: () {
-          //                     Navigator.pop(context2);
-          //                   },
-          //                   child: Text("Cancelar")),
-          //               TextButton(
-          //                   onPressed: () {
-          //                     DB.delete(tapa);
-          //                     Navigator.pop(context);
-          //                     Navigator.pop(context2);
-          //                   },
-          //                   child: Text("Eliminar"))
-          //             ],
-          //           );
-          //         },
-          //       );
-          //     },
-          //     child: const Text('Delete')),
+                  /// Rating row
+                  Row(children: [
+                Expanded(
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                      Row(children: [
+                        SliderWidget(),
+                        IconButton(
+                            color: Colors.red,
+                            tooltip: "Favorite",
+                            icon: isFavorited
+                                ? const Icon(Icons.favorite)
+                                : const Icon(Icons.favorite_border_outlined),
+                            onPressed: () {
+                              setState(() {
+                                isFavorited = !isFavorited;
+                              });
+                            })
+                      ]),
+                    ])),
+              ]),
+            ),
+          ],
         ),
+
+        // ElevatedButton(
+        //     onPressed: () {
+        //       Navigator.push(
+        //           context,
+        //           MaterialPageRoute(
+        //               builder: (context) => MyColorPicker()));
+        //     },
+        //     child: Text("Cliqueame")),
+
+        // OutlinedButton(
+        //     style: ElevatedButton.styleFrom(
+        //         //minimumSize: Size(30, 50),
+        //         backgroundColor: Colors.red,
+        //         foregroundColor: Colors.white,
+        //         textStyle:
+        //             TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+        //         padding: EdgeInsetsDirectional.symmetric(
+        //             horizontal: 30, vertical: 10),
+        //         shape: ContinuousRectangleBorder(
+        //           borderRadius: BorderRadius.circular(15),
+        //         )),
+        //     onPressed: () {
+        //       showDialog(
+        //         context: context,
+        //         builder: (BuildContext context2) {
+        //           return AlertDialog(
+        //             title: Text("Eliminar"),
+        //             content:
+        //                 Text("¿Está seguro de querer eliminar la tapa?"),
+        //             actions: [
+        //               TextButton(
+        //                   onPressed: () {
+        //                     Navigator.pop(context2);
+        //                   },
+        //                   child: Text("Cancelar")),
+        //               TextButton(
+        //                   onPressed: () {
+        //                     DB.delete(tapa);
+        //                     Navigator.pop(context);
+        //                     Navigator.pop(context2);
+        //                   },
+        //                   child: Text("Eliminar"))
+        //             ],
+        //           );
+        //         },
+        //       );
+        //     },
+        //     child: const Text('Delete')),
       ),
     );
   }
@@ -602,7 +664,7 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         border: OutlineInputBorder(),
-        label: Text('Type'),
+        //label: Text('Type'),
         //hintText: 'Marca',
       ),
       borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -701,6 +763,22 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
     }
   }
 
+  Future<void> _launchUrl(String brewery) async {
+    if (brewery.isNotEmpty) {
+      final _url = Uri.encodeFull(
+          "https://google.com/search?q=where+is+beer+$brewery+made");
+      if (!await launchUrl(Uri.parse(_url))) {
+        throw Exception('Could not launch $_url');
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("You must provide brewery name"),
+        showCloseIcon: true,
+        behavior: SnackBarBehavior.floating,
+      ));
+    }
+  }
+
   void _showSelectPhotoOptions(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -775,67 +853,5 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
         ),
       ),
     );
-  }
-
-  /// Translates color <-> string
-  String colorToString(Color color) {
-    if (color == Colors.red) {
-      return "Red";
-    } else if (color == Colors.purple) {
-      return "Purple";
-    } else if (color == Colors.indigo) {
-      return "Blue";
-    } else if (color == Colors.lightBlue) {
-      return "LightBlue";
-    } else if (color == Colors.green) {
-      return "Green";
-    } else if (color == Colors.yellow) {
-      return "Yellow";
-    } else if (color == Colors.amber) {
-      return "Gold";
-    } else if (color == Colors.orange) {
-      return "Orange";
-    } else if (color == Colors.brown) {
-      return "Brown";
-    } else if (color == Colors.white) {
-      return "White";
-    } else if (color == Colors.grey) {
-      return "Grey";
-    } else if (color == Colors.black) {
-      return "Black";
-    } else {
-      return "";
-    }
-  }
-
-  /// Translates color <-> string
-  Color stringToColor(String color) {
-    if (color == "Red") {
-      return Colors.red;
-    } else if (color == "Purple") {
-      return Colors.purple;
-    } else if (color == "Blue") {
-      return Colors.indigo;
-    } else if (color == "LightBlue") {
-      return Colors.lightBlue;
-    } else if (color == "Green") {
-      return Colors.green;
-    } else if (color == "Yellow") {
-      return Colors.yellow;
-    } else if (color == "Gold") {
-      return Colors.amber;
-    } else if (color == "Orange") {
-      return Colors.orange;
-    } else if (color == "Brown") {
-      return Colors.brown;
-    } else if (color == "White") {
-      return Colors.white;
-    } else if (color == "Grey") {
-      return Colors.grey;
-    } else if (color == "Black") {
-      return Colors.black;
-    } else {
-      return Colors.black;
-    }
   }
 }

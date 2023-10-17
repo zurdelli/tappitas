@@ -2,10 +2,14 @@ import 'dart:core';
 // import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:tappitas/models/tapa.dart';
 import 'package:tappitas/db.dart';
+import 'package:tappitas/provider/order_provider.dart';
 import 'package:tappitas/screens/library/widgets/app_bar.dart';
 import 'package:tappitas/utilities.dart';
+
+late var lastClausule;
 
 class Lista extends StatefulWidget {
   @override
@@ -19,15 +23,14 @@ class _ListaState extends State<Lista> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      cargaTapitas();
+      cargaTapitas(lastClausule);
     });
   }
 
   /// Carga tapitas sera el metodo encargado del setState
-  cargaTapitas() async {
+  void cargaTapitas(String lastClausule) async {
     /// auxTapa es una lista de tapas obtenida desde la ddbb
-    List<Tapa> auxTapa = await DB.tapas();
-
+    List<Tapa> auxTapa = await DB.tapas(lastClausule);
     setState(() {
       tapitas = auxTapa;
     });
@@ -35,36 +38,37 @@ class _ListaState extends State<Lista> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: MyAppBar(titulo: "Tappitas", cantidad: tapitas.length),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () {
-            Navigator.pushNamed(context, "/formtapa",
-                    arguments: Tapa(
-                        id: 0,
-                        imagen: '',
-                        primColor: '',
-                        secoColor: '',
-                        date: DateFormat('dd-MM-yyyy')
-                            .format(DateTime.now())
-                            .toString(),
-                        place: '',
-                        brewery: '',
-                        brewCountry: '',
-                        brewCountryCode: '',
-                        type: '',
-                        isFavorited: 0,
-                        rating: 0.0,
-                        model: ''))
-                // Necesario para el reload de la listview
-                .then((_) => cargaTapitas());
-          },
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        body:
+    lastClausule = Provider.of<OrderProvider>(context).orderString;
 
-            /// Metodo para crear la listView de forma dinamica
-            Utilities().createListview(context, tapitas, cargaTapitas));
+    return Scaffold(
+      appBar: MyAppBar(
+          titulo: "Tappitas", cantidad: tapitas.length, callback: cargaTapitas),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          Navigator.pushNamed(context, "/formtapa",
+                  arguments: Tapa(
+                      id: 0,
+                      imagen: '',
+                      primColor: '',
+                      secoColor: '',
+                      date: DateFormat('dd-MM-yyyy')
+                          .format(DateTime.now())
+                          .toString(),
+                      place: '',
+                      brewery: '',
+                      brewCountry: '',
+                      brewCountryCode: '',
+                      type: '',
+                      isFavorited: 0,
+                      rating: 0.0,
+                      model: ''))
+              // Necesario para el reload de la listview
+              .then((_) => cargaTapitas(lastClausule));
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      body: createListview(context, tapitas, cargaTapitas),
+    );
   }
 }

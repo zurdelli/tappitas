@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.tappitas.app-mergeDebugResources-27:/values-zh/values-zh.xml",
+            "outputFile": "com.zapps.tappitas.app-mergeDebugResources-28:/values-zh/values-zh.xml",
             "map": [
                 {
                     "source": "C:\\Users\\moyan\\.gradle\\caches\\transforms-3\\cbccbc56b5a32fc4c247362e91ed3cbf\\transformed\\jetified-ucrop-2.2.8\\res\\values-zh\\values-zh.xml",

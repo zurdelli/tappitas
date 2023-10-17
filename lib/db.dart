@@ -52,11 +52,12 @@ class DB {
   }
 
   ///Genera una lista de tapas
-  static Future<List<Tapa>> tapas() async {
+  static Future<List<Tapa>> tapas(String order) async {
     Database db = await _openDB();
 
     // El query para hacer un select * es simplemente el nombre de la tabla
-    final List<Map<String, dynamic>> tapasMap = await db.query(tabla);
+    final List<Map<String, dynamic>> tapasMap =
+        await db.query(tabla, orderBy: order);
 
     return List.generate(
         tapasMap.length,

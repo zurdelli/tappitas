@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tappitas/db.dart';
-import 'package:tappitas/models/tapa.dart';
 
 class Steps extends StatelessWidget {
   const Steps({Key? key}) : super(key: key);
@@ -11,27 +10,30 @@ class Steps extends StatelessWidget {
       appBar: AppBar(
         title: Text("Statistics"),
       ),
-      body: Column(
-        children: [
-          Text("Total de tapas: ${ModalRoute.of(context)!.settings.arguments}"),
-          SingleChildScrollView(
-            child: FutureBuilder<List<Step>>(
-                future: getSteps(),
-                builder:
-                    (BuildContext context, AsyncSnapshot<List<Step>> snapshot) {
-                  if (snapshot.hasData) {
-                    return Statistics(steps: snapshot.data ?? []);
-                  } else {
-                    return Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(16),
-                        child: LinearProgressIndicator(),
-                      ),
-                    );
-                  }
-                }),
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Text(
+                "Total de tapas: ${ModalRoute.of(context)!.settings.arguments}"),
+            SingleChildScrollView(
+              child: FutureBuilder<List<Step>>(
+                  future: getSteps(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<Step>> snapshot) {
+                    if (snapshot.hasData) {
+                      return Statistics(steps: snapshot.data ?? []);
+                    } else {
+                      return Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(16),
+                          child: LinearProgressIndicator(),
+                        ),
+                      );
+                    }
+                  }),
+            ),
+          ],
+        ),
       ),
     );
   }
