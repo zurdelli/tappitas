@@ -4,14 +4,16 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tappitas/provider/slider_provider.dart';
+import 'package:tappitas/screens/formTapa/widgets/brewery_row/brewery.dart';
 
-import 'package:tappitas/screens/formTapa/widgets/select_photo_options_screen.dart';
+import 'package:tappitas/screens/formTapa/widgets/photo_row/select_photo_options_screen.dart';
 
 import 'package:tappitas/db.dart';
 import 'package:tappitas/models/tapa.dart';
@@ -34,22 +36,22 @@ class CreaTapaExpandable extends StatefulWidget {
   State<CreaTapaExpandable> createState() => _CreaTapaExpandableState();
 }
 
-const List<String> listaTipos = <String>[
+const List<String> typesOfBeer = <String>[
+  '?',
   'Lager',
-  'Red',
+  'Ale',
   'Weiss',
   'IPA/APA',
-  'Black',
-  'Tostada',
+  'Stout',
+  'Red',
   'Alcohol Free',
   'Soft Drink',
+  'Cider',
   'Other'
 ];
 
 class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
   late Tapa tapa;
-
-  List<bool> _isOpen = [true, false, false, false, false, false];
 
   String tapaAsStringBase64 = "";
   String selectedType = "";
@@ -76,8 +78,8 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
     setState(() => pickSecondColor = color);
   }
 
-  final primColorController = TextEditingController();
-  final secoColorController = TextEditingController();
+  //final primColorController = TextEditingController();
+  //final secoColorController = TextEditingController();
 
   bool isFavorited = false;
 
@@ -118,8 +120,9 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
       }
 
       placeController.text = tapa.place;
-      brewCountryController.text = selectedCountry = tapa.brewCountry;
-      selectedCountryCode = tapa.brewCountryCode;
+      brewCountryController.text =
+          "${tapa.brewCountry} ${tapa.brewCountryCode}";
+
       modelController.text = tapa.model;
       lastRating = tapa.rating;
     });
@@ -138,7 +141,8 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
     final myLastRating = Provider.of<SliderProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Tapa"),
+        title:
+            Text("Tappa", style: GoogleFonts.leckerliOne(), textScaleFactor: 1),
         actions: [
           TextButton.icon(
               style: ButtonStyle(
@@ -149,21 +153,21 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
                   context: context,
                   builder: (BuildContext context2) {
                     return AlertDialog(
-                      title: Text("Eliminar"),
-                      content: Text("¿Está seguro de querer eliminar la tapa?"),
+                      title: Text("Delete"),
+                      content: Text("Delete tappa?"),
                       actions: [
                         TextButton(
                             onPressed: () {
                               Navigator.pop(context2);
                             },
-                            child: Text("Cancelar")),
+                            child: Text("Cancel")),
                         TextButton(
                             onPressed: () {
                               DB.delete(tapa);
                               Navigator.pop(context);
                               Navigator.pop(context2);
                             },
-                            child: Text("Eliminar"))
+                            child: Text("Delete"))
                       ],
                     );
                   },
@@ -188,8 +192,14 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
                 tapa.secoColor = colorToString(pickSecondColor);
                 tapa.date = dateController.text;
                 tapa.place = placeController.text;
-                tapa.brewCountry = selectedCountry;
-                tapa.brewCountryCode = selectedCountryCode;
+                tapa.brewCountry = brewCountryController.text.isNotEmpty
+                    ? brewCountryController.text
+                        .substring(0, brewCountryController.text.length - 5)
+                    : "";
+                tapa.brewCountryCode = brewCountryController.text.isNotEmpty
+                    ? brewCountryController.text
+                        .substring(brewCountryController.text.length - 4)
+                    : "";
                 tapa.type = selectedType;
                 tapa.isFavorited = isFavorited ? 1 : 0;
                 tapa.rating = myLastRating.value;
@@ -203,8 +213,14 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
                     secoColor: colorToString(pickSecondColor),
                     date: dateController.text,
                     place: placeController.text,
-                    brewCountry: selectedCountry,
-                    brewCountryCode: selectedCountryCode,
+                    brewCountry: brewCountryController.text.isNotEmpty
+                        ? brewCountryController.text
+                            .substring(0, brewCountryController.text.length - 5)
+                        : "",
+                    brewCountryCode: brewCountryController.text.isNotEmpty
+                        ? brewCountryController.text
+                            .substring(brewCountryController.text.length - 4)
+                        : "",
                     type: selectedType,
                     isFavorited: isFavorited ? 1 : 0,
                     rating: myLastRating.value,
@@ -217,23 +233,22 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
                 showCloseIcon: true,
                 behavior: SnackBarBehavior.floating,
               ));
-              setState(() {
-                _isOpen[0] = true;
-              });
+              // setState(() {
+              //   _isOpen[0] = true;
+              // });
             }
             // }
           },
           child: Icon(Icons.save)),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: SingleChildScrollView(
-        //padding: const EdgeInsets.all(16.0),
         child: ExpansionPanelList.radio(
           initialOpenPanelValue: 1,
           animationDuration: const Duration(milliseconds: 500),
           expansionCallback: (int index, bool isExpanded) {
-            setState(() {
-              _isOpen[index] = isExpanded;
-            });
+            // setState(() {
+            //   _isOpen[index] = isExpanded;
+            // });
           },
           children: [
             ExpansionPanelRadio(
@@ -287,63 +302,10 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
                         ? Icon(Icons.done)
                         : Icon(Icons.remove),
                   )),
-              body: Column(
-                children: [
-                  Row(
-                    ///Brewery row
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: 5,
-                            ),
-                            TextField(
-                              controller: breweryController,
-                              textCapitalization: TextCapitalization.sentences,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: 'Name',
-                                focusColor: Colors.black,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            TextField(
-                                controller: brewCountryController,
-                                decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    prefixIcon: Icon(Icons.location_on),
-                                    labelText: "Country",
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        Icons.search,
-                                      ),
-                                      onPressed: () {
-                                        _launchUrl(breweryController.text);
-                                      },
-                                    )),
-                                readOnly: true,
-                                onTap: () => showCountryPicker(
-                                    context: context,
-                                    onSelect: (Country country) {
-                                      brewCountryController.text =
-                                          selectedCountry =
-                                              country.nameLocalized ??
-                                                  country.name;
-                                      selectedCountryCode = country.countryCode;
-                                    },
-                                    favorite: <String>['ES', 'DE'])),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+              body: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: breweryRow(breweryController, brewCountryController,
+                    context, selectedCountry, selectedCountryCode),
               ),
             ),
             ExpansionPanelRadio(
@@ -356,31 +318,32 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
                         ? Icon(Icons.done)
                         : Icon(Icons.remove),
                   )),
-              body:
-
+              body: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
                   /// Model & Type
-                  Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: dropDownBeerTypes(context, selectedType),
-                  ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: TextFormField(
-                      controller: modelController,
-                      textCapitalization: TextCapitalization.sentences,
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Model (optional)'),
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: dropDownBeerTypes(context, selectedType),
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: TextFormField(
+                        controller: modelController,
+                        textCapitalization: TextCapitalization.sentences,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Model (optional)'),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             ExpansionPanelRadio(
@@ -395,74 +358,77 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
                         ? Icon(Icons.done)
                         : Icon(Icons.remove),
                   )),
-              body: Row(
-                // Drinked @ row
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      children: [
-                        // Text.rich(TextSpan(
-                        //     style: TextStyle(fontSize: 20), text: 'Drinked @')),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        TextField(
-                          controller: dateController,
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.calendar_today),
-                              labelText: "Date"),
-                          readOnly: true,
-                          onTap: () async {
-                            DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(2000),
-                                lastDate: DateTime.now());
-                            if (pickedDate != null) {
-                              print(
-                                  pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
-                              String formattedDate =
-                                  DateFormat('dd-MM-yyyy').format(pickedDate);
-                              print(
-                                  formattedDate); //formatted date output using intl package =>  2021-03-16
-                              //you can implement different kind of Date Format here according to your requirement
-
-                              setState(() {
-                                dateController.text =
-                                    formattedDate; //set output date to TextField value.
-                              });
-                            } else {
-                              print("Date is not selected");
-                            }
-                          },
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        TextField(
-                          controller: placeController,
-                          textCapitalization: TextCapitalization.sentences,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.near_me),
-                            suffixIcon: IconButton(
-                              color: Colors.blue,
-                              //alignment: Alignment.centerRight,
-                              icon: Icon(Icons.gps_fixed),
-                              onPressed: () {
-                                getLocation();
-                              },
-                            ),
-                            labelText: 'Place',
+              body: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  // Drinked @ row
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          // Text.rich(TextSpan(
+                          //     style: TextStyle(fontSize: 20), text: 'Drinked @')),
+                          SizedBox(
+                            height: 5,
                           ),
-                        ),
-                      ],
+                          TextField(
+                            controller: dateController,
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                prefixIcon: Icon(Icons.calendar_today),
+                                labelText: "Date"),
+                            readOnly: true,
+                            onTap: () async {
+                              DateTime? pickedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime.now());
+                              if (pickedDate != null) {
+                                print(
+                                    pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+                                String formattedDate =
+                                    DateFormat('dd-MM-yyyy').format(pickedDate);
+                                print(
+                                    formattedDate); //formatted date output using intl package =>  2021-03-16
+                                //you can implement different kind of Date Format here according to your requirement
+
+                                setState(() {
+                                  dateController.text =
+                                      formattedDate; //set output date to TextField value.
+                                });
+                              } else {
+                                print("Date is not selected");
+                              }
+                            },
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          TextField(
+                            controller: placeController,
+                            textCapitalization: TextCapitalization.sentences,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.near_me),
+                              suffixIcon: IconButton(
+                                color: Colors.blue,
+                                //alignment: Alignment.centerRight,
+                                icon: Icon(Icons.gps_fixed),
+                                onPressed: () {
+                                  getLocation();
+                                },
+                              ),
+                              labelText: 'Place',
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             ExpansionPanelRadio(
@@ -477,97 +443,100 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
                         ? Icon(Icons.done)
                         : Icon(Icons.remove),
                   )),
-              body: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                          //minimumSize: Size(160, 60),
-                          shape: ContinuousRectangleBorder(),
-                          side: BorderSide(color: Colors.white, width: 0.5),
-                          backgroundColor: pickFirstColor,
-                          foregroundColor: pickFirstColor == Colors.white
-                              ? Colors.black
-                              : Colors.white),
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Select a color'),
-                              content: SingleChildScrollView(
-                                child: BlockPicker(
-                                  pickerColor: pickFirstColor,
-                                  onColorChanged: changeFirstColor,
-                                  availableColors: colors,
-                                  layoutBuilder: pickerLayoutBuilder,
-                                  itemBuilder: pickerItemBuilder,
+              body: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                            //minimumSize: Size(160, 60),
+                            shape: ContinuousRectangleBorder(),
+                            side: BorderSide(color: Colors.white, width: 0.5),
+                            backgroundColor: pickFirstColor,
+                            foregroundColor: pickFirstColor == Colors.white
+                                ? Colors.black
+                                : Colors.white),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Select a color'),
+                                content: SingleChildScrollView(
+                                  child: BlockPicker(
+                                    pickerColor: pickFirstColor,
+                                    onColorChanged: changeFirstColor,
+                                    availableColors: colors,
+                                    layoutBuilder: pickerLayoutBuilder,
+                                    itemBuilder: pickerItemBuilder,
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      child: Text.rich(
-                        TextSpan(
-                          children: [
-                            WidgetSpan(child: Icon(Icons.color_lens)),
-                            TextSpan(
-                                text: colorToString(pickFirstColor).isEmpty
-                                    ? '1st color'
-                                    : colorToString(pickFirstColor))
-                          ],
+                              );
+                            },
+                          );
+                        },
+                        child: Text.rich(
+                          TextSpan(
+                            children: [
+                              WidgetSpan(child: Icon(Icons.color_lens)),
+                              TextSpan(
+                                  text: colorToString(pickFirstColor).isEmpty
+                                      ? '1st color'
+                                      : colorToString(pickFirstColor))
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                          //minimumSize: Size(160, 60),
-                          shape: ContinuousRectangleBorder(),
-                          side: BorderSide(color: Colors.white, width: 0.5),
-                          backgroundColor: pickSecondColor,
-                          foregroundColor: pickSecondColor == Colors.white
-                              ? Colors.black
-                              : Colors.white),
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Select a color'),
-                              content: SingleChildScrollView(
-                                child: BlockPicker(
-                                  pickerColor: pickSecondColor,
-                                  onColorChanged: changeSecondColor,
-                                  availableColors: colors,
-                                  layoutBuilder: pickerLayoutBuilder,
-                                  itemBuilder: pickerItemBuilder,
+                    Expanded(
+                      flex: 1,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                            //minimumSize: Size(160, 60),
+                            shape: ContinuousRectangleBorder(),
+                            side: BorderSide(color: Colors.white, width: 0.5),
+                            backgroundColor: pickSecondColor,
+                            foregroundColor: pickSecondColor == Colors.white
+                                ? Colors.black
+                                : Colors.white),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Select a color'),
+                                content: SingleChildScrollView(
+                                  child: BlockPicker(
+                                    pickerColor: pickSecondColor,
+                                    onColorChanged: changeSecondColor,
+                                    availableColors: colors,
+                                    layoutBuilder: pickerLayoutBuilder,
+                                    itemBuilder: pickerItemBuilder,
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      child: Text.rich(
-                        TextSpan(
-                          children: [
-                            WidgetSpan(child: Icon(Icons.color_lens)),
-                            TextSpan(
-                                text: colorToString(pickSecondColor).isEmpty
-                                    ? '2nd color'
-                                    : colorToString(pickSecondColor))
-                          ],
+                              );
+                            },
+                          );
+                        },
+                        child: Text.rich(
+                          TextSpan(
+                            children: [
+                              WidgetSpan(child: Icon(Icons.color_lens)),
+                              TextSpan(
+                                  text: colorToString(pickSecondColor).isEmpty
+                                      ? '2nd color'
+                                      : colorToString(pickSecondColor))
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             ExpansionPanelRadio(
@@ -575,7 +544,7 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
               //isExpanded: _isOpen[3],
               canTapOnHeader: true,
               headerBuilder: ((context, isExpanded) => ListTile(
-                    title: Text("Rate me"),
+                    title: Text("Rate tappa"),
                   )),
               body:
 
@@ -659,7 +628,7 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
   }
 
   Widget dropDownBeerTypes(BuildContext context, String valor) {
-    if (valor.isEmpty) valor = "Lager";
+    if (valor.isEmpty) valor = "?";
 
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
@@ -677,7 +646,7 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
           selectedType = valor;
         });
       },
-      items: listaTipos.map<DropdownMenuItem<String>>((String value) {
+      items: typesOfBeer.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
@@ -760,22 +729,6 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
         //print("tapaAsStringBase64: $tapaAsStringBase64");
         Navigator.of(context).pop();
       });
-    }
-  }
-
-  Future<void> _launchUrl(String brewery) async {
-    if (brewery.isNotEmpty) {
-      final _url = Uri.encodeFull(
-          "https://google.com/search?q=where+is+beer+$brewery+made");
-      if (!await launchUrl(Uri.parse(_url))) {
-        throw Exception('Could not launch $_url');
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("You must provide brewery name"),
-        showCloseIcon: true,
-        behavior: SnackBarBehavior.floating,
-      ));
     }
   }
 

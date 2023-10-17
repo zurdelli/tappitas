@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:tappitas/db.dart';
+import 'package:tappitas/provider/order_provider.dart';
 
 class Steps extends StatelessWidget {
   const Steps({Key? key}) : super(key: key);
@@ -8,13 +11,18 @@ class Steps extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Statistics"),
+        title: Text("Statistics",
+            style: GoogleFonts.leckerliOne(), textScaleFactor: 1),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Text(
-                "Total de tapas: ${ModalRoute.of(context)!.settings.arguments}"),
+              "Total: ${Provider.of<OrderProvider>(context).cantTappas}",
+              style: TextStyle(
+                fontSize: 20,
+              ),
+            ),
             SingleChildScrollView(
               child: FutureBuilder<List<Step>>(
                   future: getSteps(),

@@ -1,5 +1,7 @@
+import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tappitas/utilities.dart';
 
 class DialogSearch extends StatefulWidget {
@@ -31,138 +33,160 @@ class _DialogSearchState extends State<DialogSearch> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Text("Search"),
-            TextField(
-              controller: marController,
-              textCapitalization: TextCapitalization.words,
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(), hintText: 'Brewery'),
-            ),
-            TextField(
-              controller: typeController,
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(), hintText: 'Type'),
-            ),
-            TextField(
-              controller: paiController,
-              textCapitalization: TextCapitalization.words,
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(), hintText: 'Brewery Country'),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                        //minimumSize: Size(160, 60),
-                        shape: ContinuousRectangleBorder(),
-                        side: BorderSide(color: Colors.white, width: 0.5),
-                        backgroundColor: pickFirstColor,
-                        foregroundColor: pickFirstColor == Colors.white
-                            ? Colors.black
-                            : Colors.white),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Select a color'),
-                            content: SingleChildScrollView(
-                              child: BlockPicker(
-                                pickerColor: pickFirstColor,
-                                onColorChanged: changeFirstColor,
-                                availableColors: colors,
-                                layoutBuilder: pickerLayoutBuilder,
-                                itemBuilder: pickerItemBuilder,
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    child: Text("1st color"),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                        //minimumSize: Size(160, 60),
-                        shape: ContinuousRectangleBorder(),
-                        side: BorderSide(color: Colors.white, width: 0.5),
-                        backgroundColor: pickSecondColor,
-                        foregroundColor: pickSecondColor == Colors.white
-                            ? Colors.black
-                            : Colors.white),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Select a color'),
-                            content: SingleChildScrollView(
-                              child: BlockPicker(
-                                pickerColor: pickSecondColor,
-                                onColorChanged: changeSecondColor,
-                                availableColors: colors,
-                                layoutBuilder: pickerLayoutBuilder,
-                                itemBuilder: pickerItemBuilder,
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    child: Text.rich(
-                      TextSpan(
-                        children: [
-                          WidgetSpan(child: Icon(Icons.color_lens)),
-                          TextSpan(
-                              text: colorToString(pickSecondColor).isEmpty
-                                  ? '2nd color'
-                                  : colorToString(pickSecondColor)),
-                        ],
-                      ),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text("Search", style: GoogleFonts.aladin(), textScaleFactor: 2),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: TextField(
+                      controller: marController,
+                      textCapitalization: TextCapitalization.words,
+                      decoration: InputDecoration(
+                          border: UnderlineInputBorder(), hintText: 'Brewery'),
                     ),
                   ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: TextField(
+                      controller: paiController,
+                      textCapitalization: TextCapitalization.words,
+                      decoration: InputDecoration(
+                          border: UnderlineInputBorder(), hintText: 'Country'),
+                      readOnly: true,
+                      onTap: () => showCountryPicker(
+                          context: context,
+                          onSelect: (Country country) {
+                            paiController.text = country.name;
+                          },
+                          favorite: <String>['ES', 'DE', 'BE']),
+                    ),
+                  ),
+                ],
+              ),
+              TextField(
+                controller: typeController,
+                decoration: InputDecoration(
+                    border: UnderlineInputBorder(), hintText: 'Type'),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                            //minimumSize: Size(160, 60),
+                            shape: ContinuousRectangleBorder(),
+                            side: BorderSide(color: Colors.white, width: 0.5),
+                            backgroundColor: pickFirstColor,
+                            foregroundColor: pickFirstColor == Colors.white
+                                ? Colors.black
+                                : Colors.white),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Select a color'),
+                                content: SingleChildScrollView(
+                                  child: BlockPicker(
+                                    pickerColor: pickFirstColor,
+                                    onColorChanged: changeFirstColor,
+                                    availableColors: colors,
+                                    layoutBuilder: pickerLayoutBuilder,
+                                    itemBuilder: pickerItemBuilder,
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: Text("1st color"),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                            //minimumSize: Size(160, 60),
+                            shape: ContinuousRectangleBorder(),
+                            side: BorderSide(color: Colors.white, width: 0.5),
+                            backgroundColor: pickSecondColor,
+                            foregroundColor: pickSecondColor == Colors.white
+                                ? Colors.black
+                                : Colors.white),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Select a color'),
+                                content: SingleChildScrollView(
+                                  child: BlockPicker(
+                                    pickerColor: pickSecondColor,
+                                    onColorChanged: changeSecondColor,
+                                    availableColors: colors,
+                                    layoutBuilder: pickerLayoutBuilder,
+                                    itemBuilder: pickerItemBuilder,
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: Text('2nd color'),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    getClausule(
-                      context,
-                      marController.text,
-                      typeController.text,
-                      paiController.text,
-                      colorToString(pickFirstColor),
-                      colorToString(pickSecondColor),
-                    );
-                  },
-                  child: const Text('Send'),
-                ),
-              ],
-            ),
-          ]),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(horizontal: 50)),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Cancel'),
+                  ),
+                  FilledButton(
+                    style: FilledButton.styleFrom(
+                        padding: EdgeInsets.only(left: 50, right: 50)),
+                    onPressed: () {
+                      getClausule(
+                        context,
+                        marController.text,
+                        typeController.text,
+                        paiController.text,
+                        colorToString(pickFirstColor),
+                        colorToString(pickSecondColor),
+                      );
+                    },
+                    child: const Text('Send'),
+                  ),
+                ],
+              ),
+            ]),
+      ),
     );
   }
 

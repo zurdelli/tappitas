@@ -33,6 +33,8 @@ class _ListaState extends State<Lista> {
     List<Tapa> auxTapa = await DB.tapas(lastClausule);
     setState(() {
       tapitas = auxTapa;
+      Provider.of<OrderProvider>(context, listen: false).cantTappas =
+          tapitas.length;
     });
   }
 
@@ -41,8 +43,7 @@ class _ListaState extends State<Lista> {
     lastClausule = Provider.of<OrderProvider>(context).orderString;
 
     return Scaffold(
-      appBar: MyAppBar(
-          titulo: "Tappitas", cantidad: tapitas.length, callback: cargaTapitas),
+      appBar: MyAppBar(titulo: "Tappitas", callback: cargaTapitas),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {

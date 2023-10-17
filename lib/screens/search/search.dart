@@ -41,11 +41,8 @@ class _ListaBusquedaState extends State<Busqueda> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(
-        titulo: "Search",
-        cantidad: tapitas.length,
-        callback: helperMethodToGetTapitas(
-            ModalRoute.of(context)!.settings.arguments as List<String>),
+      appBar: AppBar(
+        title: Text("Search"),
       ),
       body: createListview(context, tapitas, helperMethodToGetTapitas),
     );

@@ -125,7 +125,7 @@ ListView createListview(
             confirmDismiss: (direction) async {
               if (direction == DismissDirection.startToEnd) {
                 return await _showConfirmationDialogToDeleteTapa(
-                    context, i, tapas, callback(lastClausule));
+                    context, i, tapas, callback);
               } else {
                 Navigator.pushNamed(context, "/formtapa", arguments: tapas[i])
                     .then((_) => callback(lastClausule));
@@ -137,15 +137,19 @@ ListView createListview(
                 TextSpan(
                   children: [
                     TextSpan(
-                      text: tapas[i].brewery,
+                      text: "${tapas[i].brewery} ",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     TextSpan(
                         text: tapas[i].brewCountryCode.isEmpty
                             ? ""
-                            : " ${Utils.countryCodeToEmoji(tapas[i].brewCountryCode)}"),
+                            : tapas[i].brewCountryCode),
                     TextSpan(
-                      text: tapas[i].type.isEmpty ? "" : " - ${tapas[i].type}",
+                      text: tapas[i].model.isEmpty
+                          ? tapas[i].type.isEmpty
+                              ? ""
+                              : " - ${tapas[i].type}"
+                          : " - ${tapas[i].model}",
                     ),
                     TextSpan(
                         text: tapas[i].rating == 0.0
@@ -219,7 +223,7 @@ Future<bool?> _showConfirmationDialogToDeleteTapa(
               onPressed: () {
                 DB.delete(tapas[i]);
                 Navigator.pop(context);
-                callback();
+                callback(lastClausule);
               },
               child: Text("Eliminar"))
         ],

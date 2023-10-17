@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:tappitas/provider/slider_provider.dart';
 import 'package:tappitas/screens/formTapa/widgets/color_picker/color_picker.dart';
 
-import 'package:tappitas/screens/formTapa/widgets/select_photo_options_screen.dart';
+import 'package:tappitas/screens/formTapa/widgets/photo_row/select_photo_options_screen.dart';
 
 import 'package:tappitas/db.dart';
 import 'package:tappitas/models/tapa.dart';
