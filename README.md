@@ -9,7 +9,7 @@ The name comes from Latin American Spanish, where a cap is called *tapita*. The 
 
 ## to-do
 
-- [] Translate according to phone's language
+- [ ] Translate according to phone's language
 - [ ] Create colors gamma
 - [ ] Posibility to create another collections (i.e clothes collections)
 
