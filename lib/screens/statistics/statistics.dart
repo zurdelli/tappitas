@@ -111,11 +111,23 @@ class _StatisticsState extends State<Statistics> {
           headerBuilder: (BuildContext context, bool isExpanded) {
             return ListTile(
               title: Text(step.title),
-              titleTextStyle: TextStyle(fontSize: 24),
+              titleTextStyle: TextStyle(
+                  fontSize: 24,
+                  color: MediaQuery.of(context).platformBrightness ==
+                          Brightness.light
+                      ? Colors.black
+                      : Colors.white),
             );
           },
           body: ListTile(
-            title: Text(step.body),
+            title: Text(
+              step.body,
+              style: TextStyle(
+                  color: MediaQuery.of(context).platformBrightness ==
+                          Brightness.light
+                      ? Colors.black
+                      : Colors.white),
+            ),
           ),
           isExpanded: step.isExpanded,
         );

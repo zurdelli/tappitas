@@ -130,8 +130,8 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:
-            Text("Tappa", style: GoogleFonts.leckerliOne(), textScaleFactor: 1),
+        title: Text("Tappa",
+            style: TextStyle(fontFamily: 'Aladin'), textScaleFactor: 1.4),
         actions: [
           TextButton.icon(
               style: ButtonStyle(
