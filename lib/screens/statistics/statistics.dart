@@ -12,7 +12,7 @@ class Steps extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Statistics",
-            style: GoogleFonts.leckerliOne(), textScaleFactor: 1),
+            style: TextStyle(fontFamily: 'Aladin'), textScaleFactor: 1),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -55,14 +55,14 @@ class Step {
 }
 
 Future<List<Step>> getSteps() async {
-  var _items = [
+  var items = [
     Step('By Color', await listOfSomething("primColor")),
     Step('By Country', await listOfSomething("brewCountry")),
     Step('By Brewery', await listOfSomething("brewery")),
     Step('By Date', await listOfSomething("date")),
     Step('By Place', await listOfSomething("place")),
   ];
-  return _items;
+  return items;
 }
 
 Future<String> listOfSomething(String clausule) async {

@@ -1,13 +1,9 @@
 import 'dart:convert';
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:tappitas/db.dart';
 import 'package:tappitas/models/tapa.dart';
-import 'package:country_picker/src/utils.dart';
 import 'package:tappitas/screens/library/library.dart';
-import 'package:tappitas/screens/search/dialog_search.dart';
 
 /// Translates color <-> string
 String colorToString(Color color) {
@@ -128,7 +124,7 @@ ListView createListview(
                     context, i, tapas, callback);
               } else {
                 Navigator.pushNamed(context, "/formtapa", arguments: tapas[i])
-                    .then((_) => callback(lastClausule));
+                    .then((_) => callback(lastOrderMethod));
               }
               return null;
             },
@@ -165,8 +161,8 @@ ListView createListview(
                 radius: 30.0,
               ),
               subtitle: tapas[i].place.isEmpty
-                  ? Text("Tomada el ${tapas[i].date}")
-                  : Text("Tomada el ${tapas[i].date} \nen ${tapas[i].place}"),
+                  ? Text("Drinked ${tapas[i].date}")
+                  : Text("Drinked ${tapas[i].date} \nin ${tapas[i].place}"),
               isThreeLine: true,
               trailing: IconButton(
                   onPressed: () {
@@ -177,7 +173,7 @@ ListView createListview(
                         duration: Duration(seconds: 1),
                       ));
                       DB.updateFavorite(1, tapas[i].id);
-                      callback(lastClausule);
+                      callback(lastOrderMethod);
                     } else if (tapas[i].isFavorited == 1) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: const Text("Quitado de favoritos"),
@@ -185,7 +181,7 @@ ListView createListview(
                         duration: Duration(seconds: 1),
                       ));
                       DB.updateFavorite(0, tapas[i].id);
-                      callback(lastClausule);
+                      callback(lastOrderMethod);
                     }
                   },
                   icon: tapas[i].isFavorited == 0
@@ -193,7 +189,7 @@ ListView createListview(
                       : Icon(Icons.favorite)),
               iconColor: tapas[i].isFavorited == 0 ? Colors.grey : Colors.red,
               onTap: () {
-                muestraAlertDialog(context, tapas[i].imagen, dialog: 'tapas');
+                alertTapa(context, tapas[i].imagen, dialog: 'tapas');
               },
               dense: false,
               horizontalTitleGap: 10,
@@ -223,7 +219,7 @@ Future<bool?> _showConfirmationDialogToDeleteTapa(
               onPressed: () {
                 DB.delete(tapas[i]);
                 Navigator.pop(context);
-                callback(lastClausule);
+                callback(lastOrderMethod);
               },
               child: Text("Eliminar"))
         ],
@@ -235,37 +231,23 @@ Future<bool?> _showConfirmationDialogToDeleteTapa(
 /// AlertDialog para la busqueda de tapas
 /// dialog = 0 -> Busqueda de tapas (alertBusqueda)
 ///        = 1 -> Zoom tapa (alertTapa)
-muestraAlertDialog(BuildContext context, String? tapaAsString,
-    {required String dialog}) {
+alertTapa(BuildContext context, String tapaAsString, {required String dialog}) {
   showDialog(
-    context: context,
-    builder: (BuildContext context) => BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-      child: Dialog(
-          elevation: 10,
-          //shape: RoundedRectangleBorder(
-          //  borderRadius: BorderRadius.all(Radius.circular(300)),
-          child: dialog == 'busqueda'
-              ? DialogSearch()
-              : alertTapa(context, tapaAsString ?? 'null')),
-    ),
-  );
-}
-
-Widget alertTapa(BuildContext context, String tapaAsStringBase64) {
-  //String tapaAsString = tapaAsStringBase64 ?? 'null';
-  return Container(
-      height: 250,
-      width: 200,
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        //color: Colors.white,
-      ),
-      child: Center(
-        child: CircleAvatar(
-          backgroundImage: MemoryImage(base64Decode(tapaAsStringBase64)),
-          radius: 200.0,
-        ),
-      ));
+      context: context,
+      builder: (BuildContext context) => BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: AlertDialog(
+              //elevation: 10,
+              shape: CircleBorder(),
+              content: SizedBox(
+                  height: 250,
+                  width: 250,
+                  child: Center(
+                    child: CircleAvatar(
+                      backgroundImage: MemoryImage(base64Decode(tapaAsString)),
+                      radius: 200.0,
+                    ),
+                  )),
+            ),
+          ));
 }

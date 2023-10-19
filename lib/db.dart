@@ -79,19 +79,23 @@ class DB {
 
   static Future<List<Tapa>> busquedaTapas(
       String marClausula,
-      String tipClausula,
       String paiClausula,
+      String tipClausula,
+      String datClausula,
+      String plaClausula,
       String fgColClausula,
       String bgColClausula) async {
     Database db = await _openDB();
 
     final List<Map<String, dynamic>> busquedaMap = await db.query(tabla,
         where:
-            "brewery LIKE ? AND type LIKE ? AND brewCountry LIKE ? AND primColor LIKE ? AND secoColor LIKE ?",
+            "brewery LIKE ? AND brewCountry LIKE ? AND type LIKE ? AND date LIKE ? AND place LIKE ? AND primColor LIKE ? AND secoColor LIKE ?",
         whereArgs: [
           marClausula,
-          tipClausula,
           paiClausula,
+          tipClausula,
+          datClausula,
+          plaClausula,
           fgColClausula,
           bgColClausula
         ]);

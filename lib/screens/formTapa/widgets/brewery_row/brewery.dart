@@ -48,10 +48,10 @@ Widget breweryRow(
 
 Future<void> _launchUrl(String brewery, BuildContext context) async {
   if (brewery.isNotEmpty) {
-    final _url = Uri.encodeFull(
+    final url = Uri.encodeFull(
         "https://google.com/search?q=where+is+$brewery+beer+made");
-    if (!await launchUrl(Uri.parse(_url))) {
-      throw Exception('Could not launch $_url');
+    if (!await launchUrl(Uri.parse(url))) {
+      throw Exception('Could not launch $url');
     }
   } else {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(

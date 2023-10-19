@@ -2,7 +2,6 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:tappitas/models/tapa.dart';
 import 'package:tappitas/db.dart';
-import 'package:tappitas/screens/library/widgets/app_bar.dart';
 import 'package:tappitas/utilities.dart';
 
 class Busqueda extends StatefulWidget {
@@ -12,7 +11,6 @@ class Busqueda extends StatefulWidget {
 
 class _ListaBusquedaState extends State<Busqueda> {
   List<Tapa> tapitas = [];
-  List<String> clausulas = [];
 
   @override
   void initState() {
@@ -24,8 +22,8 @@ class _ListaBusquedaState extends State<Busqueda> {
   }
 
   Future<List<Tapa>> buscaTapitas(List<String> clausula) async {
-    List<Tapa> tapasAux = await DB.busquedaTapas(
-        clausula[0], clausula[1], clausula[2], clausula[3], clausula[4]);
+    List<Tapa> tapasAux = await DB.busquedaTapas(clausula[0], clausula[1],
+        clausula[2], clausula[3], clausula[4], clausula[5], clausula[6]);
     return tapasAux;
   }
 

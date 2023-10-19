@@ -1,35 +1,15 @@
 [
     {
-        "merged": "com.zapps.tappitas.app-merged_res-30:/mipmap-mdpi_ic_launcher.png.flat",
-        "source": "com.zapps.tappitas.app-main-24:/mipmap-mdpi/ic_launcher.png"
-    },
-    {
-        "merged": "C:\\Users\\moyan\\.gradle\\daemon\\7.4.2\\com.zapps.tappitas.app-merged_res-30:\\drawable_launch_background.xml.flat",
-        "source": "C:\\Users\\moyan\\.gradle\\daemon\\7.4.2\\com.zapps.tappitas.app-main-24:\\drawable\\launch_background.xml"
-    },
-    {
-        "merged": "com.zapps.tappitas.app-merged_res-30:/mipmap-xhdpi_ic_launcher.png.flat",
-        "source": "com.zapps.tappitas.app-main-24:/mipmap-xhdpi/ic_launcher.png"
-    },
-    {
-        "merged": "C:\\Users\\moyan\\.gradle\\daemon\\7.4.2\\com.zapps.tappitas.app-merged_res-30:\\drawable-v21_launch_background.xml.flat",
-        "source": "C:\\Users\\moyan\\.gradle\\daemon\\7.4.2\\com.zapps.tappitas.app-main-24:\\drawable-v21\\launch_background.xml"
-    },
-    {
-        "merged": "C:\\Users\\moyan\\.gradle\\daemon\\7.4.2\\com.zapps.tappitas.app-merged_res-30:\\mipmap-xxhdpi_ic_launcher.png.flat",
-        "source": "C:\\Users\\moyan\\.gradle\\daemon\\7.4.2\\com.zapps.tappitas.app-main-24:\\mipmap-xxhdpi\\ic_launcher.png"
-    },
-    {
-        "merged": "com.zapps.tappitas.app-merged_res-30:/mipmap-xxhdpi_ic_launcher.png.flat",
-        "source": "com.zapps.tappitas.app-main-24:/mipmap-xxhdpi/ic_launcher.png"
-    },
-    {
-        "merged": "com.zapps.tappitas.app-merged_res-30:/mipmap-xxxhdpi_ic_launcher.png.flat",
-        "source": "com.zapps.tappitas.app-main-24:/mipmap-xxxhdpi/ic_launcher.png"
-    },
-    {
         "merged": "C:\\Users\\moyan\\.gradle\\daemon\\7.4.2\\com.zapps.tappitas.app-merged_res-30:\\mipmap-mdpi_ic_launcher.png.flat",
         "source": "C:\\Users\\moyan\\.gradle\\daemon\\7.4.2\\com.zapps.tappitas.app-main-24:\\mipmap-mdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "com.zapps.tappitas.app-merged_res-30:/drawable_launch_background.xml.flat",
+        "source": "com.zapps.tappitas.app-main-24:/drawable/launch_background.xml"
+    },
+    {
+        "merged": "com.zapps.tappitas.app-merged_res-30:/drawable-v21_launch_background.xml.flat",
+        "source": "com.zapps.tappitas.app-main-24:/drawable-v21/launch_background.xml"
     },
     {
         "merged": "C:\\Users\\moyan\\.gradle\\daemon\\7.4.2\\com.zapps.tappitas.app-merged_res-30:\\mipmap-xxxhdpi_ic_launcher.png.flat",
@@ -44,7 +24,7 @@
         "source": "C:\\Users\\moyan\\.gradle\\daemon\\7.4.2\\com.zapps.tappitas.app-main-24:\\mipmap-hdpi\\ic_launcher.png"
     },
     {
-        "merged": "com.zapps.tappitas.app-merged_res-30:/mipmap-hdpi_ic_launcher.png.flat",
-        "source": "com.zapps.tappitas.app-main-24:/mipmap-hdpi/ic_launcher.png"
+        "merged": "C:\\Users\\moyan\\.gradle\\daemon\\7.4.2\\com.zapps.tappitas.app-merged_res-30:\\mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "C:\\Users\\moyan\\.gradle\\daemon\\7.4.2\\com.zapps.tappitas.app-main-24:\\mipmap-xxhdpi\\ic_launcher.png"
     }
 ]

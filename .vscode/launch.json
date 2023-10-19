@@ -10,7 +10,7 @@
             "name": "tappitas",
             "request": "launch",
             "type": "dart",
-            "program": "lib/home.dart",
+            "program": "lib/main.dart",
         },
         {
             "name": "tappitas (profile mode)",

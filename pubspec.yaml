@@ -1,5 +1,5 @@
 name: tappitas
-description: App para gestionar tapas/chapas de bebidas
+description: An app to manage a collection of caps
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -67,6 +67,14 @@ flutter:
     - family: Corben
       fonts:
         - asset: fonts/Corben/Corben-Bold.ttf
+          weight: 700
+    - family: Aladin
+      fonts:
+        - asset: fonts/Aladin.ttf
+          weight: 700
+    - family: LeckerliOne
+      fonts:
+        - asset: fonts/LeckerliOne.ttf
           weight: 700
   #   - family: Trajan Pro
   #     fonts:

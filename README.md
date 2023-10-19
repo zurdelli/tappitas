@@ -9,8 +9,8 @@ The name comes from Latin Spanish, who calls a cap *tapita*. The idea to make th
 
 ## to-do
 
-- Create colors gamma
-- Translate according to phone's language
-- Posibility to create another collections (i.e clothes collections)
+- [x] Translate according to phone's language
+- [ ] Create colors gamma
+- [ ] Posibility to create another collections (i.e clothes collections)
 
 ## Screenshots

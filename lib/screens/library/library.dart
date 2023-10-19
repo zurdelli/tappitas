@@ -9,7 +9,7 @@ import 'package:tappitas/provider/order_provider.dart';
 import 'package:tappitas/screens/library/widgets/app_bar.dart';
 import 'package:tappitas/utilities.dart';
 
-late var lastClausule;
+late String lastOrderMethod;
 
 class Lista extends StatefulWidget {
   @override
@@ -23,14 +23,14 @@ class _ListaState extends State<Lista> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      cargaTapitas(lastClausule);
+      cargaTapitas(lastOrderMethod);
     });
   }
 
   /// Carga tapitas sera el metodo encargado del setState
-  void cargaTapitas(String lastClausule) async {
+  void cargaTapitas(String lastOrderMethod) async {
     /// auxTapa es una lista de tapas obtenida desde la ddbb
-    List<Tapa> auxTapa = await DB.tapas(lastClausule);
+    List<Tapa> auxTapa = await DB.tapas(lastOrderMethod);
     setState(() {
       tapitas = auxTapa;
       Provider.of<OrderProvider>(context, listen: false).cantTappas =
@@ -40,7 +40,7 @@ class _ListaState extends State<Lista> {
 
   @override
   Widget build(BuildContext context) {
-    lastClausule = Provider.of<OrderProvider>(context).orderString;
+    lastOrderMethod = Provider.of<OrderProvider>(context).orderString;
 
     return Scaffold(
       appBar: MyAppBar(titulo: "Tappitas", callback: cargaTapitas),
@@ -65,7 +65,7 @@ class _ListaState extends State<Lista> {
                       rating: 0.0,
                       model: ''))
               // Necesario para el reload de la listview
-              .then((_) => cargaTapitas(lastClausule));
+              .then((_) => cargaTapitas(lastOrderMethod));
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,

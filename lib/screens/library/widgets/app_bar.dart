@@ -1,11 +1,9 @@
-import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tappitas/provider/order_provider.dart';
 import 'package:tappitas/screens/library/widgets/order_types.dart';
-import 'package:tappitas/screens/search/dialog_search.dart';
-//import 'package:tappitas/utilities.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:tappitas/screens/search/widgets/dialog_search.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MyAppBar({required this.titulo, required this.callback});
@@ -17,28 +15,20 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title:
-          Text(titulo, style: GoogleFonts.leckerliOne(), textScaleFactor: 1.1),
+      title: Text(titulo,
+          style: TextStyle(fontFamily: 'Aladin'), textScaleFactor: 1.4),
       actions: <Widget>[
         IconButton(
             onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(25.0),
+              showDialog(
+                builder: (context) => BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: AlertDialog(
+                    //shape: CircleBorder(),
+                    content: DialogSearch(),
                   ),
                 ),
-                builder: (context) => DraggableScrollableSheet(
-                  initialChildSize: 0.7,
-                  maxChildSize: 0.8,
-                  minChildSize: 0.28,
-                  expand: false,
-                  builder: ((context, scrollController) {
-                    return DialogSearch();
-                  }),
-                ),
+                context: context,
               );
             },
             icon: const Icon(Icons.search),
@@ -73,13 +63,15 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         MenuAnchor(
             menuChildren: <Widget>[
+              // MenuItemButton(
+              //   child: Text("Settings"),
+              //   onPressed: () {},
+              // ),
               MenuItemButton(
-                child: Text("Settings"),
-                onPressed: () {},
-              ),
-              MenuItemButton(
-                child: Text("Dark Mode"),
-                onPressed: () {},
+                child: Text("About"),
+                onPressed: () {
+                  Navigator.pushNamed(context, "/about");
+                },
               ),
             ],
             builder: (BuildContext context, MenuController controller,
@@ -99,8 +91,6 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       ],
     );
   }
-
-  void changeDarkMode(bool newValue) {}
 
   @override
   Size get preferredSize => Size.fromHeight(AppBar().preferredSize.height);
