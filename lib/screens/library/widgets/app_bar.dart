@@ -63,10 +63,10 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         MenuAnchor(
             menuChildren: <Widget>[
-              // MenuItemButton(
-              //   child: Text("Settings"),
-              //   onPressed: () {},
-              // ),
+              MenuItemButton(
+                child: Text("Import/Export Database"),
+                onPressed: () => Navigator.pushNamed(context, '/dbie'),
+              ),
               MenuItemButton(
                 child: Text("About"),
                 onPressed: () {
@@ -78,13 +78,8 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
                 Widget? child) {
               return TextButton(
                 //focusNode: _buttonFocusNode,
-                onPressed: () {
-                  if (controller.isOpen) {
-                    controller.close();
-                  } else {
-                    controller.open();
-                  }
-                },
+                onPressed: () =>
+                    controller.isOpen ? controller.close() : controller.open(),
                 child: const Icon(Icons.more_vert),
               );
             })

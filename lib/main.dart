@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tappitas/provider/order_provider.dart';
+import 'package:tappitas/screens/DBExporterImporter/db_importer_exporter.dart';
 import 'package:tappitas/screens/about/about.dart';
 import 'package:tappitas/screens/formTapa/crea_tapa_expandable.dart';
 import 'package:tappitas/screens/library/library.dart';
@@ -37,7 +38,10 @@ class MiHome extends StatelessWidget {
           "/formtapa": (context) => CreaTapaExpandable(),
           "/busqtapa": (context) => Busqueda(),
           "/statistics": (context) => Steps(),
-          "/about": (context) => About()
+          "/about": (context) => About(),
+          "/dbie": (context) => DBImporterExporter(
+                title: 'DB importer',
+              )
         },
         theme: ThemeData(
           useMaterial3: true,
