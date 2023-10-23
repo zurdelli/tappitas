@@ -9,10 +9,9 @@ class DB {
   /// Crea o abre la database "tapitas.db"
   static Future<Database> _openDB() async {
     var pathFull = join(await getDatabasesPath(), '$tabla.db');
-    print('el archivo que se abre es es $pathFull');
+    //print('el archivo que se abre es es $pathFull');
     return openDatabase(pathFull, singleInstance: true,
         onCreate: (db, version) {
-      print('object');
       return db.execute(
         "CREATE TABLE $tabla (id INTEGER PRIMARY KEY, imagen BLOB, brewery TEXT, "
         "date TEXT, place TEXT, primColor TEXT, secoColor TEXT, brewCountry TEXT,"
@@ -136,8 +135,6 @@ class DB {
   }
 
   static Future<void> closeDB(Database db) async {
-    print(db.isOpen ? "esta abierta" : "esta cerrada ");
-
     db.close();
   }
 }

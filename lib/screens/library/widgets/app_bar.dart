@@ -65,7 +65,9 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
             menuChildren: <Widget>[
               MenuItemButton(
                 child: Text("Import/Export Database"),
-                onPressed: () => Navigator.pushNamed(context, '/dbie'),
+                onPressed: () => Navigator.pushNamed(context, '/dbie').then(
+                    (value) =>
+                        callback(context.read<OrderProvider>().orderString)),
               ),
               MenuItemButton(
                 child: Text("About"),

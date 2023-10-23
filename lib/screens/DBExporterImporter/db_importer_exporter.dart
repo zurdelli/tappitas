@@ -2,11 +2,12 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:tappitas/db.dart';
-import 'package:sqflite_common_porter/sqflite_porter.dart';
+//import 'package:sqflite_common_porter/sqflite_porter.dart';
 
 class DBImporterExporter extends StatefulWidget {
   const DBImporterExporter({Key? key, required this.title}) : super(key: key);
@@ -24,30 +25,28 @@ class _DBImporterExporterState extends State<DBImporterExporter> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(widget.title,
+            style: TextStyle(fontFamily: 'Aladin'), textScaleFactor: 1.1),
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text(message),
-            ElevatedButton(
+            SizedBox(
+              height: 50,
+            ),
+            CustomButton(
+              color: Colors.blueGrey,
+              title: 'Copy',
               onPressed: () async {
                 String databasesPath = await getDatabasesPath();
                 String dbPath = join(databasesPath, nombreTabla);
-
-                Database myDB = await DB.getDB();
-
                 File source1 = File(dbPath);
-                //Database source1 = await openDatabase('$dbFolder/$nombreTabla');
 
-                print('El objeto $source1 sera copiado');
-
-                if (myDB.isOpen) {
-                  print("Esta abierta");
-                  DB.closeDB(myDB);
-                  print("Esta cerrada");
-                }
+                //Database myDB = await DB.getDB();
+                //DB.closeDB(myDB);
 
                 Directory copyTo =
                     Directory("/storage/emulated/0/Documents/tappitas");
@@ -65,34 +64,36 @@ class _DBImporterExporterState extends State<DBImporterExporter> {
                     print('Please give permission');
                   }
                 }
+                String today = DateFormat('dd-MM-yyyy,H-m-s')
+                    .format(DateTime.now())
+                    .toString();
+                String backupFile = "${copyTo.path}/$nombreTabla-$today.backup";
 
-                String newPath = "${copyTo.path}/$nombreTabla.backup";
-                await source1.copy(newPath);
+                //String newPath =
+                await source1.copy(backupFile);
 
                 setState(() {
-                  message = 'Successfully Copied DB';
+                  message = 'Successfully Copied DB at: \n$backupFile';
                 });
               },
-              child: const Text('Copy DB'),
             ),
-            ElevatedButton(
+            CustomButton(
+                color: Colors.red,
+                title: 'Delete',
+                onPressed: () async {
+                  var databasesPath = await getDatabasesPath();
+                  var dbPath = join(databasesPath, nombreTabla);
+                  await deleteDatabase(dbPath);
+                  setState(() {
+                    message = 'Successfully deleted DB';
+                  });
+                }),
+            CustomButton(
+              color: Colors.green,
+              title: 'Restore',
               onPressed: () async {
                 var databasesPath = await getDatabasesPath();
                 var dbPath = join(databasesPath, nombreTabla);
-                await deleteDatabase(dbPath);
-                setState(() {
-                  message = 'Successfully deleted DB';
-                });
-              },
-              child: const Text('Delete DB'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                var databasesPath = await getDatabasesPath();
-                var dbPath = join(databasesPath, nombreTabla);
-
-                var exists = await databaseExists(dbPath);
-                print(exists ? "existe" : "no existe");
 
                 FilePickerResult? result =
                     await FilePicker.platform.pickFiles(withData: true);
@@ -100,21 +101,20 @@ class _DBImporterExporterState extends State<DBImporterExporter> {
                 if (result != null) {
                   String resultPath = result.files.single.path!;
                   File source = File(resultPath);
-                  // File source =
-                  //     File(resultPath.substring(0, resultPath.length - 4));
-                  //int lenght = source.size;
-                  print("archivo de bkp: $source,\narchivo final: $dbPath");
-
                   await source.copy(dbPath);
 
                   setState(() {
                     message = 'Successfully Restored DB';
                   });
-                } else {
-                  // User canceled the picker
                 }
               },
-              child: const Text('Restore DB'),
+            ),
+            SizedBox(
+              height: 100,
+            ),
+            Text(
+              message,
+              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -123,28 +123,42 @@ class _DBImporterExporterState extends State<DBImporterExporter> {
   }
 }
 
-// Future<bool> _hasAcceptedPermissions() async {
-// if (Platform.isAndroid) {
-//   if (await _requestPermission(Permission.storage) &&
-//       // access media location needed for android 10/Q
-//       await _requestPermission(Permission.accessMediaLocation) &&
-//       // manage external storage needed for android 11/R
-      
-//       await _requestPermission(Permission.manageExternalStorage)) {
-//     return true;
-//   } else {
-//     return false;
-//   }
+class CustomButton extends StatelessWidget {
+  const CustomButton(
+      {Key? key,
+      required this.color,
+      required this.title,
+      required this.onPressed})
+      : super(key: key);
+  final Color color;
+  final String title;
+  final Function onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(5))),
+                    backgroundColor: color,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.all(20),
+                    textStyle: TextStyle(fontSize: 18),
+                    side: BorderSide(width: 2, color: Colors.white)),
+                onPressed: () => onPressed(),
+                child: Text(title)),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+// Widget customButton(BuildContext context){
+
 // }
-// if (Platform.isIOS) {
-//   if (await _requestPermission(Permission.photos)) {
-//     return true;
-//   } else {
-//     return false;
-//   }
-// } else {
-//   // not android or ios
-//   return false;
-// }}
-
-

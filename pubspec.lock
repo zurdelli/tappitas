@@ -65,14 +65,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
-  csv:
-    dependency: transitive
-    description:
-      name: csv
-      sha256: "142bdf2b24f4a49e35a0fc4398f21d861c4c0f9015e8054dcacd0bb8e23ee27d"
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.1.0"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -81,14 +73,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.6"
-  cv:
-    dependency: transitive
-    description:
-      name: cv
-      sha256: ced005b8198584c61f263bef46128a25c4e495253fc4937f35f932c74536b1e3
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.14"
   fake_async:
     dependency: transitive
     description:
@@ -389,14 +373,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.0"
-  logging:
-    dependency: transitive
-    description:
-      name: logging
-      sha256: "623a88c9594aa774443aa3eb2d41807a48486b5613e67599fb4c41c0ad47c340"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.0"
   matcher:
     dependency: transitive
     description:
@@ -557,14 +533,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.5"
-  pub_semver:
-    dependency: transitive
-    description:
-      name: pub_semver
-      sha256: "40d3ab1bbd474c4c2328c91e3a7df8c6dd629b79ece4c4bd04bee496a224fb0c"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.4"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -650,31 +618,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.5.0"
-  sqflite_common_ffi:
-    dependency: transitive
-    description:
-      name: sqflite_common_ffi
-      sha256: "0d5cc1be2eb18400ac6701c31211d44164393aa75886093002ecdd947be04f93"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.3.0+2"
-  sqflite_common_porter:
-    dependency: "direct main"
-    description:
-      path: sqflite_common_porter
-      ref: dart3a
-      resolved-ref: "64c1e156742dc43bdc523d135ee3dd10d14f3674"
-      url: "https://github.com/tekartik/sqflite_more"
-    source: git
-    version: "0.3.0"
-  sqlite3:
-    dependency: transitive
-    description:
-      name: sqlite3
-      sha256: db65233e6b99e99b2548932f55a987961bc06d82a31a0665451fa0b4fff4c3fb
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.0"
   stack_trace:
     dependency: transitive
     description:
@@ -707,24 +650,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.0"
-  tekartik_common_utils:
-    dependency: transitive
-    description:
-      path: "."
-      ref: dart3a
-      resolved-ref: "7860727f3510ef3f6bfa01642e45276ce56a4a20"
-      url: "https://github.com/tekartik/common_utils.dart"
-    source: git
-    version: "0.15.0"
-  tekartik_lints:
-    dependency: transitive
-    description:
-      path: "packages/lints"
-      ref: dart3a
-      resolved-ref: c0120ff82d8d92708f63fde412b53899c6eeca99
-      url: "https://github.com/tekartik/common.dart"
-    source: git
-    version: "0.4.1"
   term_glyph:
     dependency: transitive
     description:
