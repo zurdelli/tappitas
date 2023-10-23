@@ -1,8 +1,43 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tappitas/provider/tapa_provider.dart';
+import 'package:tappitas/utilities.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-Widget breweryRow(
+class BreweryRow extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _BreweryRowState();
+}
+
+class _BreweryRowState extends State<BreweryRow> {
+  String brewery = "";
+  String breweryCountry = "";
+  String breweryCountryCode = "";
+
+  final breweryController = TextEditingController();
+  final brewCountryController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      brewery = context.read<TapaProvider>().brewery;
+      breweryCountry = context.read<TapaProvider>().brewCountry;
+      breweryCountryCode = context.read<TapaProvider>().brewCountryCode;
+      breweryController.text = brewery;
+      brewCountryController.text = breweryCountry;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return breweryWidget(breweryController, brewCountryController, context,
+        breweryCountry, breweryCountryCode);
+  }
+}
+
+Widget breweryWidget(
     TextEditingController breweryController,
     TextEditingController brewCountryController,
     BuildContext context,
@@ -11,6 +46,8 @@ Widget breweryRow(
   return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
     TextField(
       controller: breweryController,
+      onTapOutside: (_) => Provider.of<TapaProvider>(context, listen: false)
+          .brewery = breweryController.text,
       textCapitalization: TextCapitalization.sentences,
       decoration: InputDecoration(
         border: OutlineInputBorder(),
@@ -39,6 +76,11 @@ Widget breweryRow(
         onTap: () => showCountryPicker(
             context: context,
             onSelect: (Country country) {
+              Provider.of<TapaProvider>(context, listen: false).brewCountry =
+                  country.name;
+              Provider.of<TapaProvider>(context, listen: false)
+                  .brewCountryCode = country.countryCode;
+
               brewCountryController.text =
                   "${country.name} ${countryCodeToEmoji(country.countryCode)}";
             },
@@ -60,16 +102,4 @@ Future<void> _launchUrl(String brewery, BuildContext context) async {
       behavior: SnackBarBehavior.floating,
     ));
   }
-}
-
-String countryCodeToEmoji(String countryCode) {
-  // 0x41 is Letter A
-  // 0x1F1E6 is Regional Indicator Symbol Letter A
-  // Example :
-  // firstLetter U => 20 + 0x1F1E6
-  // secondLetter S => 18 + 0x1F1E6
-  // See: https://en.wikipedia.org/wiki/Regional_Indicator_Symbol
-  final int firstLetter = countryCode.codeUnitAt(0) - 0x41 + 0x1F1E6;
-  final int secondLetter = countryCode.codeUnitAt(1) - 0x41 + 0x1F1E6;
-  return String.fromCharCode(firstLetter) + String.fromCharCode(secondLetter);
 }

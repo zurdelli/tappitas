@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tappitas/provider/order_provider.dart';
+import 'package:tappitas/provider/tapa_provider.dart';
 import 'package:tappitas/screens/DBExporterImporter/db_importer_exporter.dart';
 import 'package:tappitas/screens/about/about.dart';
 import 'package:tappitas/screens/formTapa/crea_tapa_expandable.dart';
@@ -20,6 +21,7 @@ class MiHome extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => OrderProvider()),
+        ChangeNotifierProvider(create: (context) => TapaProvider()),
       ],
       child: MaterialApp(
         localizationsDelegates: [
@@ -37,7 +39,7 @@ class MiHome extends StatelessWidget {
           "/": (context) => Lista(),
           "/formtapa": (context) => CreaTapaExpandable(),
           "/busqtapa": (context) => Busqueda(),
-          "/statistics": (context) => Steps(),
+          "/statistics": (context) => Statistics(),
           "/about": (context) => About(),
           "/dbie": (context) => DBImporterExporter(
                 title: 'DB importer',

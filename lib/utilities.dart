@@ -7,6 +7,7 @@ import 'package:tappitas/screens/library/library.dart';
 
 /// Translates color <-> string
 String colorToString(Color color) {
+  print("el color es: $color");
   if (color == Colors.red) {
     return "Red";
   } else if (color == Colors.purple) {
@@ -65,6 +66,18 @@ Color stringToColor(String color) {
   } else {
     return Colors.transparent;
   }
+}
+
+String countryCodeToEmoji(String countryCode) {
+  // 0x41 is Letter A
+  // 0x1F1E6 is Regional Indicator Symbol Letter A
+  // Example :
+  // firstLetter U => 20 + 0x1F1E6
+  // secondLetter S => 18 + 0x1F1E6
+  // See: https://en.wikipedia.org/wiki/Regional_Indicator_Symbol
+  final int firstLetter = countryCode.codeUnitAt(0) - 0x41 + 0x1F1E6;
+  final int secondLetter = countryCode.codeUnitAt(1) - 0x41 + 0x1F1E6;
+  return String.fromCharCode(firstLetter) + String.fromCharCode(secondLetter);
 }
 
 List<Color> colors = [
@@ -139,7 +152,7 @@ ListView createListview(
                     TextSpan(
                         text: tapas[i].brewCountryCode.isEmpty
                             ? ""
-                            : tapas[i].brewCountryCode),
+                            : countryCodeToEmoji(tapas[i].brewCountryCode)),
                     TextSpan(
                       text: tapas[i].model.isEmpty
                           ? tapas[i].type.isEmpty

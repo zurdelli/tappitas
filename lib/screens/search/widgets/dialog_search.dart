@@ -2,7 +2,7 @@ import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:intl/intl.dart';
-import 'package:tappitas/screens/formTapa/crea_tapa_expandable.dart';
+import 'package:tappitas/screens/formTapa/widgets/type_model_row/type_model.dart';
 import 'package:tappitas/utilities.dart';
 
 class DialogSearch extends StatefulWidget {
