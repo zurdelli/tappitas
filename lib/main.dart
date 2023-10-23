@@ -42,7 +42,7 @@ class MiHome extends StatelessWidget {
           "/statistics": (context) => Statistics(),
           "/about": (context) => About(),
           "/dbie": (context) => DBImporterExporter(
-                title: 'DB importer',
+                title: 'DB Manager',
               )
         },
         theme: ThemeData(

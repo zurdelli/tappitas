@@ -6,7 +6,9 @@ class About extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("About")),
+      appBar: AppBar(
+          title: Text("About",
+              style: TextStyle(fontFamily: 'Aladin'), textScaleFactor: 1.1)),
       body: SingleChildScrollView(
           padding: EdgeInsets.only(top: 40, left: 16, right: 16),
           child: Center(

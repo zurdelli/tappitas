@@ -38,8 +38,8 @@ class _DBImporterExporterState extends State<DBImporterExporter> {
               height: 50,
             ),
             CustomButton(
-              color: Colors.blueGrey,
-              title: 'Copy',
+              color: Color.fromARGB(135, 103, 120, 128),
+              title: 'Copy current database',
               onPressed: () async {
                 String databasesPath = await getDatabasesPath();
                 String dbPath = join(databasesPath, nombreTabla);
@@ -78,19 +78,39 @@ class _DBImporterExporterState extends State<DBImporterExporter> {
               },
             ),
             CustomButton(
-                color: Colors.red,
-                title: 'Delete',
-                onPressed: () async {
-                  var databasesPath = await getDatabasesPath();
-                  var dbPath = join(databasesPath, nombreTabla);
-                  await deleteDatabase(dbPath);
-                  setState(() {
-                    message = 'Successfully deleted DB';
-                  });
+                color: Color.fromARGB(255, 101, 70, 68),
+                title: 'Delete current database',
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context2) {
+                      return AlertDialog(
+                        title: Text("Delete Database?"),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context2);
+                              },
+                              child: Text("Cancel")),
+                          TextButton(
+                              onPressed: () async {
+                                var databasesPath = await getDatabasesPath();
+                                var dbPath = join(databasesPath, nombreTabla);
+                                await deleteDatabase(dbPath);
+                                setState(() {
+                                  message = 'Successfully deleted DB';
+                                });
+                                Navigator.pop(context2);
+                              },
+                              child: Text("Delete"))
+                        ],
+                      );
+                    },
+                  );
                 }),
             CustomButton(
-              color: Colors.green,
-              title: 'Restore',
+              color: const Color.fromARGB(255, 36, 82, 38),
+              title: 'Restore database',
               onPressed: () async {
                 var databasesPath = await getDatabasesPath();
                 var dbPath = join(databasesPath, nombreTabla);
@@ -141,15 +161,15 @@ class CustomButton extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: OutlinedButton(
-                style: OutlinedButton.styleFrom(
+            child: FilledButton.tonal(
+                style: FilledButton.styleFrom(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(5))),
-                    backgroundColor: color,
-                    foregroundColor: Colors.white,
+                    //backgroundColor: color,
+                    //foregroundColor: Colors.white,
                     padding: EdgeInsets.all(20),
-                    textStyle: TextStyle(fontSize: 18),
-                    side: BorderSide(width: 2, color: Colors.white)),
+                    textStyle: TextStyle(fontSize: 18)),
+                //side: BorderSide(width: 2, color: Colors.white)),
                 onPressed: () => onPressed(),
                 child: Text(title)),
           )
