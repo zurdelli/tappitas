@@ -6,9 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:tappitas/db.dart';
-//import 'package:sqflite_common_porter/sqflite_porter.dart';
 
+/// Class to export or import a sqlite database
 class DBImporterExporter extends StatefulWidget {
   const DBImporterExporter({Key? key, required this.title}) : super(key: key);
 
@@ -20,7 +19,12 @@ class DBImporterExporter extends StatefulWidget {
 
 class _DBImporterExporterState extends State<DBImporterExporter> {
   String message = '';
-  String nombreTabla = 'tapitas.db';
+
+  String nombreTabla =
+      'tapitas.db'; // must match with the table opened in db.dart
+
+  String targetDir = "/storage/emulated/0/Documents/tappitas";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,17 +43,12 @@ class _DBImporterExporterState extends State<DBImporterExporter> {
             ),
             CustomButton(
               color: Color.fromARGB(135, 103, 120, 128),
-              title: 'Copy current database',
+              title: 'Export database',
               onPressed: () async {
                 String databasesPath = await getDatabasesPath();
                 String dbPath = join(databasesPath, nombreTabla);
                 File source1 = File(dbPath);
-
-                //Database myDB = await DB.getDB();
-                //DB.closeDB(myDB);
-
-                Directory copyTo =
-                    Directory("/storage/emulated/0/Documents/tappitas");
+                Directory copyTo = Directory(targetDir);
                 if ((await copyTo.exists())) {
                   var status = await Permission.storage.status;
                   if (!status.isGranted) {
@@ -67,25 +66,28 @@ class _DBImporterExporterState extends State<DBImporterExporter> {
                 String today = DateFormat('dd-MM-yyyy,H-m-s')
                     .format(DateTime.now())
                     .toString();
+
+                // Its needed to change the name for each backup - if not you won't be able to
+                // restore the backup later
                 String backupFile = "${copyTo.path}/$nombreTabla-$today.backup";
 
-                //String newPath =
                 await source1.copy(backupFile);
 
                 setState(() {
-                  message = 'Successfully Copied DB at: \n$backupFile';
+                  message = 'Successfully Exported DB at: \n$backupFile';
                 });
               },
             ),
             CustomButton(
                 color: Color.fromARGB(255, 101, 70, 68),
-                title: 'Delete current database',
+                title: 'Delete database',
                 onPressed: () {
                   showDialog(
                     context: context,
                     builder: (BuildContext context2) {
                       return AlertDialog(
-                        title: Text("Delete Database?"),
+                        title: Text("Delete"),
+                        content: Text("Delete current database?"),
                         actions: [
                           TextButton(
                               onPressed: () {
@@ -110,7 +112,7 @@ class _DBImporterExporterState extends State<DBImporterExporter> {
                 }),
             CustomButton(
               color: const Color.fromARGB(255, 36, 82, 38),
-              title: 'Restore database',
+              title: 'Import database',
               onPressed: () async {
                 var databasesPath = await getDatabasesPath();
                 var dbPath = join(databasesPath, nombreTabla);
@@ -124,7 +126,7 @@ class _DBImporterExporterState extends State<DBImporterExporter> {
                   await source.copy(dbPath);
 
                   setState(() {
-                    message = 'Successfully Restored DB';
+                    message = 'Successfully imported DB';
                   });
                 }
               },

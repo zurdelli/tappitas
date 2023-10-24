@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Order & total of tappas provider
 class OrderProvider extends ChangeNotifier {
   String _orderString = "brewery";
 

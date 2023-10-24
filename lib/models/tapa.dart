@@ -1,4 +1,4 @@
-/// Modelo de la tapa
+/// Model of tappa
 class Tapa {
   int? id;
   late String imagen;
@@ -47,8 +47,6 @@ class Tapa {
     };
   }
 
-  // Implement toString to make it easier to see information about
-  // each dog when using the print statement.
   @override
   String toString() {
     return 'Tapa{id: $id, tipo: $type, marca: $brewery}';

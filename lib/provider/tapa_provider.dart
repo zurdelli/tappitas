@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Provider of all the fields used in form tapa expandable
 class TapaProvider extends ChangeNotifier {
   String _tapaAsString = "";
   String _brewery = "";
