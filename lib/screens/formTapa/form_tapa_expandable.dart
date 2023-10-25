@@ -173,16 +173,18 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
             if (tapa.id! > 0) {
               tapa.imagen = Provider.of<TapaProvider>(context, listen: false)
                   .tapaAsString;
-              tapa.brewery =
-                  Provider.of<TapaProvider>(context, listen: false).brewery;
+              tapa.brewery = Provider.of<TapaProvider>(context, listen: false)
+                  .brewery
+                  .trim();
               tapa.primColor = colorToString(
                   Provider.of<TapaProvider>(context, listen: false).color1);
               tapa.secoColor = colorToString(
                   Provider.of<TapaProvider>(context, listen: false).color2);
               tapa.date =
                   Provider.of<TapaProvider>(context, listen: false).date;
-              tapa.place =
-                  Provider.of<TapaProvider>(context, listen: false).place;
+              tapa.place = Provider.of<TapaProvider>(context, listen: false)
+                  .place
+                  .trim();
               tapa.brewCountry =
                   Provider.of<TapaProvider>(context, listen: false).brewCountry;
               tapa.brewCountryCode =
@@ -196,38 +198,40 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
                   : Provider.of<TapaProvider>(context, listen: false).type;
               tapa.isFavorited = isFavorited ? 1 : 0;
               tapa.rating = lastRating;
-              tapa.model =
-                  Provider.of<TapaProvider>(context, listen: false).model;
+              tapa.model = Provider.of<TapaProvider>(context, listen: false)
+                  .model
+                  .trim();
               DB.update(tapa);
             } else {
               DB.insert(Tapa(
                   imagen: Provider.of<TapaProvider>(context, listen: false)
                       .tapaAsString,
-                  brewery:
-                      Provider.of<TapaProvider>(context, listen: false).brewery,
+                  brewery: Provider.of<TapaProvider>(context, listen: false)
+                      .brewery
+                      .trim(),
                   primColor: colorToString(
                       Provider.of<TapaProvider>(context, listen: false).color1),
                   secoColor: colorToString(
                       Provider.of<TapaProvider>(context, listen: false).color2),
                   date: Provider.of<TapaProvider>(context, listen: false).date,
-                  place:
-                      Provider.of<TapaProvider>(context, listen: false).place,
-                  brewCountry: Provider.of<TapaProvider>(context, listen: false).brewCountry.length > 1
-                      ? Provider.of<TapaProvider>(context, listen: false).brewCountry.substring(
-                          0,
-                          Provider.of<TapaProvider>(context, listen: false)
-                                  .brewCountry
-                                  .length -
-                              5)
-                      : "",
-                  brewCountryCode: Provider.of<TapaProvider>(context, listen: false)
-                      .brewCountryCode,
-                  type: Provider.of<TapaProvider>(context, listen: false).type.contains('?')
+                  place: Provider.of<TapaProvider>(context, listen: false)
+                      .place
+                      .trim(),
+                  brewCountry: Provider.of<TapaProvider>(context, listen: false)
+                      .brewCountry,
+                  brewCountryCode:
+                      Provider.of<TapaProvider>(context, listen: false)
+                          .brewCountryCode,
+                  type: Provider.of<TapaProvider>(context, listen: false)
+                          .type
+                          .contains('?')
                       ? ""
                       : Provider.of<TapaProvider>(context, listen: false).type,
                   isFavorited: isFavorited ? 1 : 0,
                   rating: lastRating,
-                  model: Provider.of<TapaProvider>(context, listen: false).model));
+                  model: Provider.of<TapaProvider>(context, listen: false)
+                      .model
+                      .trim()));
             }
             Navigator.pop(context);
           } else {
