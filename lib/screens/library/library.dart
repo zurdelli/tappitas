@@ -53,7 +53,7 @@ class _ListaState extends State<Lista> {
                       imagen: '',
                       primColor: '',
                       secoColor: '',
-                      date: DateFormat('dd-MM-yyyy')
+                      date: DateFormat('yyyy-MM-dd')
                           .format(DateTime.now())
                           .toString(),
                       place: '',

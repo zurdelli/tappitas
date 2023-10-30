@@ -57,7 +57,7 @@ class _DrinkedAtRowState extends State<DrinkedAtRow> {
                       lastDate: DateTime.now());
                   if (pickedDate != null) {
                     String formattedDate =
-                        DateFormat('dd-MM-yyyy').format(pickedDate);
+                        DateFormat('yyyy-MM-dd').format(pickedDate);
                     setState(() {
                       dateController.text = formattedDate;
                       Provider.of<TapaProvider>(context, listen: false).date =
