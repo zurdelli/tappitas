@@ -60,7 +60,7 @@ class _ColorsRowState extends State<ColorsRow> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: const Text('Select a color'),
+                    title: Text("Pick a color"),
                     content: SingleChildScrollView(
                       child: BlockPicker(
                         pickerColor: _color1,
@@ -70,6 +70,14 @@ class _ColorsRowState extends State<ColorsRow> {
                         itemBuilder: pickerItemBuilder,
                       ),
                     ),
+                    actions: [
+                      TextButton(
+                        child: const Text('Ok'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
                   );
                 },
               );
@@ -110,7 +118,7 @@ class _ColorsRowState extends State<ColorsRow> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: const Text('Select a color'),
+                    title: const Text('Pick a color'),
                     content: SingleChildScrollView(
                       child: BlockPicker(
                         pickerColor: _color2,
@@ -120,6 +128,14 @@ class _ColorsRowState extends State<ColorsRow> {
                         itemBuilder: pickerItemBuilder,
                       ),
                     ),
+                    actions: [
+                      TextButton(
+                        child: const Text('Ok'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
                   );
                 },
               );
@@ -140,53 +156,4 @@ class _ColorsRowState extends State<ColorsRow> {
       ],
     );
   }
-}
-
-Widget pickerLayoutBuilder(
-    BuildContext context, List<Color> colors, PickerItem child) {
-  Orientation orientation = MediaQuery.of(context).orientation;
-
-  return SizedBox(
-    width: 300,
-    height: orientation == Orientation.portrait ? 360 : 240,
-    child: GridView.count(
-      crossAxisCount: orientation == Orientation.portrait ? 3 : 4,
-      crossAxisSpacing: 5,
-      mainAxisSpacing: 5,
-      children: [for (Color color in colors) child(color)],
-    ),
-  );
-}
-
-Widget pickerItemBuilder(
-    Color color, bool isCurrentColor, void Function() changeColor) {
-  return Container(
-    margin: const EdgeInsets.all(8),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(30),
-      color: color,
-      boxShadow: [
-        BoxShadow(
-            color: color.withOpacity(0.8),
-            offset: const Offset(1, 2),
-            blurRadius: 5)
-      ],
-    ),
-    child: Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: changeColor,
-        borderRadius: BorderRadius.circular(30),
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 250),
-          opacity: isCurrentColor ? 1 : 0,
-          child: Icon(
-            Icons.done,
-            size: 24,
-            color: useWhiteForeground(color) ? Colors.white : Colors.black,
-          ),
-        ),
-      ),
-    ),
-  );
 }

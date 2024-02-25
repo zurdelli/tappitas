@@ -22,11 +22,11 @@ class _BreweryRowState extends State<BreweryRow> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      brewery = context.read<TapaProvider>().brewery;
-      breweryCountry = context.read<TapaProvider>().brewCountry;
+      brewery = breweryController.text = context.read<TapaProvider>().brewery;
+      breweryCountry = brewCountryController.text = context.read<TapaProvider>().brewCountry;
       breweryCountryCode = context.read<TapaProvider>().brewCountryCode;
-      breweryController.text = brewery;
-      brewCountryController.text = breweryCountry;
+      //breweryController.text = brewery;
+      //brewCountryController.text = breweryCountry;
     });
   }
 
@@ -47,8 +47,8 @@ Widget breweryWidget(
     TextField(
       controller: breweryController,
       onTapOutside: (_) => Provider.of<TapaProvider>(context, listen: false)
-          .brewery = breweryController.text,
-      textCapitalization: TextCapitalization.sentences,
+          .brewery = breweryController.text.trim(),
+      textCapitalization: TextCapitalization.words,
       decoration: InputDecoration(
         border: OutlineInputBorder(),
         labelText: 'Name',

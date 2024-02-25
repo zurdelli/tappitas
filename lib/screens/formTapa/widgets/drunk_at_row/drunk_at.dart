@@ -52,7 +52,8 @@ class _DrinkedAtRowState extends State<DrinkedAtRow> {
                 onTap: () async {
                   DateTime? pickedDate = await showDatePicker(
                       context: context,
-                      initialDate: DateTime.now(),
+                      initialDate:
+                          DateTime.parse(context.read<TapaProvider>().date),
                       firstDate: DateTime(2000),
                       lastDate: DateTime.now());
                   if (pickedDate != null) {
@@ -73,7 +74,7 @@ class _DrinkedAtRowState extends State<DrinkedAtRow> {
                 controller: placeController,
                 onTapOutside: (event) =>
                     Provider.of<TapaProvider>(context, listen: false).place =
-                        placeController.text,
+                        placeController.text.trim(),
                 textCapitalization: TextCapitalization.sentences,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),

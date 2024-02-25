@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:tappitas/db.dart';
 import 'package:tappitas/models/tapa.dart';
 import 'package:tappitas/screens/library/library.dart';
@@ -30,6 +31,10 @@ String colorToString(Color color) {
     return "White";
   } else if (color == Colors.grey) {
     return "Grey";
+  } else if (color == Color.fromARGB(255, 255, 101, 153)) {
+    return "Pink";
+  } else if (color == Color.fromARGB(255, 232, 195, 158)) {
+    return "Beige";
   } else if (color == Colors.black) {
     return "Black";
   } else {
@@ -61,6 +66,10 @@ Color stringToColor(String color) {
     return Colors.white;
   } else if (color == "Grey") {
     return Colors.grey;
+  } else if (color == "Pink") {
+    return Color.fromARGB(255, 255, 101, 153);
+  } else if (color == "Beige") {
+    return Color.fromARGB(255, 232, 195, 158);
   } else if (color == "Black") {
     return Colors.black;
   } else {
@@ -81,6 +90,7 @@ String countryCodeToEmoji(String countryCode) {
 }
 
 List<Color> colors = [
+  Color.fromARGB(255, 255, 101, 153),
   Colors.red,
   Colors.purple,
   Colors.indigo,
@@ -90,6 +100,7 @@ List<Color> colors = [
   Colors.amber,
   Colors.orange,
   Colors.brown,
+  Color.fromARGB(255, 232, 195, 158),
   Colors.white,
   Colors.grey,
   Colors.black,
@@ -97,8 +108,8 @@ List<Color> colors = [
 
 /// Crea la listView que carga todas las tapitas. Recibe la funcion cargaTapitas()
 /// como callback (la llama y se ejecuta el setState)
-ListView createListview(
-    BuildContext context, List<Tapa> tapas, Function callback) {
+ListView createListview(BuildContext context, List<Tapa> tapas,
+    Function callback, List<String>? clausulas) {
   return ListView.builder(
       //shrinkWrap: true,
       //scrollDirection: Axis.vertical,
@@ -106,21 +117,22 @@ ListView createListview(
       physics: const BouncingScrollPhysics(),
       itemBuilder: (context, i) => Dismissible(
             key: Key(i.toString()),
-            //direction: DismissDirection.startToEnd,
+            direction: DismissDirection.startToEnd,
+            // background: Container(
+            //     color: Colors.red,
+            //     padding: EdgeInsets.only(left: 5),
+            //     child: Align(
+            //         alignment: Alignment.centerLeft,
+            //         child: Icon(Icons.delete, color: Colors.white))),
+            //secondaryBackground: Container(
             background: Container(
-                color: Colors.red,
-                padding: EdgeInsets.only(left: 5),
-                child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Icon(Icons.delete, color: Colors.white))),
-            secondaryBackground: Container(
                 color: Colors.blue,
                 child: (Padding(
                     padding: const EdgeInsets.all(15),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: const [
-                        Icon(Icons.edit, color: Colors.red),
+                        Icon(Icons.edit),
                         SizedBox(
                           width: 8,
                         ),
@@ -133,11 +145,14 @@ ListView createListview(
             onDismissed: (direction) {},
             confirmDismiss: (direction) async {
               if (direction == DismissDirection.startToEnd) {
-                return await _showConfirmationDialogToDeleteTapa(
-                    context, i, tapas, callback);
-              } else {
                 Navigator.pushNamed(context, "/formtapa", arguments: tapas[i])
-                    .then((_) => callback(lastOrderMethod));
+                    .then((_) => (clausulas == null
+                        ? callback(lastOrderMethod)
+                        : callback(clausulas)));
+              } else {
+                // return await _showConfirmationDialogToDeleteTapa(
+                //     context, i, tapas, callback);
+                return null;
               }
               return null;
             },
@@ -150,15 +165,15 @@ ListView createListview(
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     TextSpan(
+                      text: tapas[i].model,
+                      style: TextStyle(fontStyle: FontStyle.italic),
+                    ),
+                    TextSpan(
                         text: tapas[i].brewCountryCode.isEmpty
                             ? ""
-                            : countryCodeToEmoji(tapas[i].brewCountryCode)),
+                            : " ${countryCodeToEmoji(tapas[i].brewCountryCode)}"),
                     TextSpan(
-                      text: tapas[i].model.isEmpty
-                          ? tapas[i].type.isEmpty
-                              ? ""
-                              : " - ${tapas[i].type}"
-                          : " - ${tapas[i].model}",
+                      text: tapas[i].type.isEmpty ? "" : " - ${tapas[i].type}",
                     ),
                     TextSpan(
                         text: tapas[i].rating == 0.0
@@ -168,20 +183,18 @@ ListView createListview(
                 ),
               ),
               leading: CircleAvatar(
-                backgroundImage: tapas[i].imagen.isNotEmpty
-                    ? MemoryImage(base64Decode(tapas[i].imagen))
-                    : null,
+                backgroundImage: MemoryImage(base64Decode(tapas[i].imagen)),
                 radius: 30.0,
               ),
               subtitle: tapas[i].place.isEmpty
-                  ? Text("Drinked ${tapas[i].date}")
-                  : Text("Drinked ${tapas[i].date} \nin ${tapas[i].place}"),
+                  ? Text("Drunk ${tapas[i].date}")
+                  : Text("Drunk ${tapas[i].date} \nin ${tapas[i].place}"),
               isThreeLine: true,
               trailing: IconButton(
                   onPressed: () {
                     if (tapas[i].isFavorited == 0) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: const Text("Agregado a favs"),
+                        content: const Text("Added to favs"),
                         showCloseIcon: true,
                         duration: Duration(seconds: 1),
                       ));
@@ -189,7 +202,7 @@ ListView createListview(
                       callback(lastOrderMethod);
                     } else if (tapas[i].isFavorited == 1) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: const Text("Quitado de favoritos"),
+                        content: const Text("Removed from favs"),
                         showCloseIcon: true,
                         duration: Duration(seconds: 1),
                       ));
@@ -263,4 +276,55 @@ alertTapa(BuildContext context, String tapaAsString, {required String dialog}) {
                   )),
             ),
           ));
+}
+
+Widget pickerLayoutBuilder(
+    BuildContext context, List<Color> colors, PickerItem child) {
+  Orientation orientation = MediaQuery.of(context).orientation;
+
+  return SizedBox(
+    width: 300,
+    //height: orientation == Orientation.portrait ? 360 : 240,
+    height: 280,
+    child: GridView.count(
+      //crossAxisCount: orientation == Orientation.portrait ? 3 : 4,
+      crossAxisCount: 4,
+      crossAxisSpacing: 0,
+      mainAxisSpacing: 0,
+      children: [for (Color color in colors) child(color)],
+    ),
+  );
+}
+
+Widget pickerItemBuilder(
+    Color color, bool isCurrentColor, void Function() changeColor) {
+  return Container(
+    margin: const EdgeInsets.all(6),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(30),
+      color: color,
+      boxShadow: [
+        BoxShadow(
+            color: color.withOpacity(0.8),
+            offset: const Offset(1, 2),
+            blurRadius: 5)
+      ],
+    ),
+    child: Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: changeColor,
+        borderRadius: BorderRadius.circular(30),
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 250),
+          opacity: isCurrentColor ? 1 : 0,
+          child: Icon(
+            Icons.done,
+            size: 24,
+            color: useWhiteForeground(color) ? Colors.white : Colors.black,
+          ),
+        ),
+      ),
+    ),
+  );
 }

@@ -40,9 +40,11 @@ class _ListaBusquedaState extends State<Busqueda> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Search"),
+        title: Text("Search",
+            style: TextStyle(fontFamily: 'Aladin'), textScaleFactor: 1.2),
       ),
-      body: createListview(context, tapitas, helperMethodToGetTapitas),
+      body: createListview(context, tapitas, helperMethodToGetTapitas,
+          ModalRoute.of(context)!.settings.arguments as List<String>),
     );
   }
 }

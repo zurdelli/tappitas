@@ -31,22 +31,21 @@ class _TypeModelRowState extends State<TypeModelRow> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Expanded(
-          flex: 1,
+          flex: 4,
           child: dropDownBeerTypes(context, type),
         ),
         SizedBox(
           width: 5,
         ),
         Expanded(
-          flex: 1,
+          flex: 3,
           child: TextFormField(
-            onTapOutside: (event) =>
-                Provider.of<TapaProvider>(context, listen: false).model =
-                    modelController.text,
+            onTapOutside: (event) => context.read<TapaProvider>().model =
+                modelController.text.trim(),
             controller: modelController,
-            textCapitalization: TextCapitalization.sentences,
+            textCapitalization: TextCapitalization.words,
             decoration: InputDecoration(
-                border: OutlineInputBorder(), labelText: 'Model (optional)'),
+                border: OutlineInputBorder(), labelText: 'Model/Text'),
           ),
         ),
       ],
@@ -69,7 +68,7 @@ class _TypeModelRowState extends State<TypeModelRow> {
       onChanged: (String? value) {
         setState(() {
           valor = value!;
-          Provider.of<TapaProvider>(context, listen: false).type = value;
+          context.read<TapaProvider>().type = value;
         });
       },
       items: typesOfBeer.map<DropdownMenuItem<String>>((String value) {
@@ -86,12 +85,15 @@ const List<String> typesOfBeer = <String>[
   '?',
   'Lager',
   'Ale',
+  'Amber (Doubel, Tripel)',
   'Weiss',
   'IPA/APA',
   'Stout',
   'Red',
   'Alcohol Free',
   'Soft Drink',
+  'Water',
   'Cider',
+  'Alcopop',
   'Other'
 ];

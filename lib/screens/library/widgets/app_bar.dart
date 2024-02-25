@@ -20,16 +20,36 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: <Widget>[
         IconButton(
             onPressed: () {
-              showDialog(
-                builder: (context) => BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: AlertDialog(
-                    //shape: CircleBorder(),
-                    content: DialogSearch(),
+              // showDialog(
+              //   builder: (context) => BackdropFilter(
+              //     filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              //     child: AlertDialog(
+              //       //shape: CircleBorder(),
+              //       content: DialogSearch(),
+              //     ),
+              //   ),
+              //   context: context,
+              // );
+              //BottomSheet
+
+              showBottomSheet(
+                  context: context,
+                  enableDrag: true,
+                  //isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(25.0),
+                    ),
                   ),
-                ),
-                context: context,
-              );
+                  builder: (context) => DraggableScrollableSheet(
+                      initialChildSize: 0.8,
+                      maxChildSize: 1,
+                      minChildSize: 0.28,
+                      expand: false,
+                      builder: ((context, scrollController) => Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: DialogSearch(),
+                          ))));
             },
             icon: const Icon(Icons.search),
             tooltip: 'Search'),

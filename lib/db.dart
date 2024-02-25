@@ -93,8 +93,9 @@ class DB {
 
     final List<Map<String, dynamic>> busquedaMap = await db.query(tabla,
         where:
-            "brewery LIKE ? AND brewCountry LIKE ? AND type LIKE ? AND date LIKE ? AND place LIKE ? AND primColor LIKE ? AND secoColor LIKE ?",
+            "(brewery LIKE ? OR model LIKE ?) AND brewCountry LIKE ? AND type LIKE ? AND date LIKE ? AND place LIKE ? AND primColor LIKE ? AND secoColor LIKE ?",
         whereArgs: [
+          marClausula,
           marClausula,
           paiClausula,
           tipClausula,
@@ -127,7 +128,7 @@ class DB {
     Database db = await _openDB();
 
     String sentencia =
-        "SELECT $parameter, COUNT(*) FROM $tabla GROUP BY $parameter";
+        "SELECT $parameter, COUNT(*) FROM $tabla GROUP BY $parameter ORDER BY COUNT(*) DESC";
 
     final List<Map<String, Object?>> busquedaMap = await db.rawQuery(sentencia);
 

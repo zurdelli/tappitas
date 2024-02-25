@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:tappitas/provider/tapa_provider.dart';
 import 'package:tappitas/screens/formTapa/widgets/brewery_row/brewery.dart';
 import 'package:tappitas/screens/formTapa/widgets/colors_row/colors.dart';
-import 'package:tappitas/screens/formTapa/widgets/drinked_at_row/drinked_at.dart';
 import 'package:tappitas/screens/formTapa/widgets/photo_row/photo.dart';
 import 'package:tappitas/screens/formTapa/widgets/type_model_row/type_model.dart';
 
@@ -12,6 +11,8 @@ import 'package:tappitas/db.dart';
 import 'package:tappitas/models/tapa.dart';
 
 import 'package:tappitas/utilities.dart';
+
+import 'widgets/drunk_at_row/drunk_at.dart';
 
 //Clase que representa la pantalla con el formulario que se ve al querer crear
 //o editar una tapa

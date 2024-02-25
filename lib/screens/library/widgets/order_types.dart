@@ -24,7 +24,7 @@ class _OrderTypesOptionsState extends State<OrderTypesOptions> {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(children: [
-          Text("Order by", style: GoogleFonts.aladin(), textScaleFactor: 2),
+          Text("Sort by", style: GoogleFonts.aladin(), textScaleFactor: 2),
           ListTile(
             title: const Text('Name'),
             leading: Radio<OrderTypes>(
