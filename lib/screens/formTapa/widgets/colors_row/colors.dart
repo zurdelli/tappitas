@@ -17,18 +17,18 @@ class _ColorsRowState extends State<ColorsRow> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _color1 = Provider.of<TapaProvider>(context, listen: false).color1;
-      _color2 = Provider.of<TapaProvider>(context, listen: false).color2;
+      _color1 = context.read<TapaProvider>().color1;
+      _color2 = context.read<TapaProvider>().color2;
     });
   }
 
   void setColor1(Color newColor) => setState(() {
         _color1 = newColor;
-        Provider.of<TapaProvider>(context, listen: false).color1 = _color1;
+        context.read<TapaProvider>().color1 = _color1;
       });
   void setColor2(Color newColor) => setState(() {
         _color2 = newColor;
-        Provider.of<TapaProvider>(context, listen: false).color2 = _color2;
+        context.read<TapaProvider>().color2 = _color2;
       });
 
   @override

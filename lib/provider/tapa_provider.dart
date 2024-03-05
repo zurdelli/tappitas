@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tappitas/models/tapa.dart';
 
 /// Provider of all the fields used in form tapa expandable
 class TapaProvider extends ChangeNotifier {
@@ -13,6 +14,13 @@ class TapaProvider extends ChangeNotifier {
   Color _color1 = Colors.transparent;
   Color _color2 = Colors.transparent;
   double _rating = 0.0;
+  Tapa _tapa = Tapa();
+
+  Tapa get tapa => _tapa;
+  set tapa(Tapa value) {
+    _tapa = value;
+    notifyListeners();
+  }
 
   String get tapaAsString => _tapaAsString;
   set tapaAsString(String newValue) {

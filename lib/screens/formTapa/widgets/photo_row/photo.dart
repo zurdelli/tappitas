@@ -20,10 +20,7 @@ class _PhotoRowState extends State<PhotoRow> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      tapaAsStringBase64 =
-          Provider.of<TapaProvider>(context, listen: false).tapaAsString;
-    });
+    tapaAsStringBase64 = context.read<TapaProvider>().tapaAsString;
   }
 
   @override
@@ -119,11 +116,8 @@ class _PhotoRowState extends State<PhotoRow> {
     if (cropped != null) {
       setState(() {
         imageFile = File(cropped.path);
-
-        tapaAsStringBase64 = base64Encode(imageFile.readAsBytesSync());
-        Provider.of<TapaProvider>(context, listen: false).tapaAsString =
-            tapaAsStringBase64;
-        //print("tapaAsStringBase64: $tapaAsStringBase64");
+        context.read<TapaProvider>().tapaAsString =
+            tapaAsStringBase64 = base64Encode(imageFile.readAsBytesSync());
         Navigator.of(context).pop();
       });
     }

@@ -1,4 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:isar/isar.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:provider/provider.dart';
 import 'package:tappitas/provider/tapa_provider.dart';
@@ -6,10 +10,7 @@ import 'package:tappitas/screens/formTapa/widgets/brewery_row/brewery.dart';
 import 'package:tappitas/screens/formTapa/widgets/colors_row/colors.dart';
 import 'package:tappitas/screens/formTapa/widgets/photo_row/photo.dart';
 import 'package:tappitas/screens/formTapa/widgets/type_model_row/type_model.dart';
-
-import 'package:tappitas/db.dart';
 import 'package:tappitas/models/tapa.dart';
-
 import 'package:tappitas/utilities.dart';
 
 import 'widgets/drunk_at_row/drunk_at.dart';
@@ -24,40 +25,16 @@ class CreaTapaExpandable extends StatefulWidget {
 
 class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
   late Tapa tapa;
+  late Id id;
 
   double lastRating = 0.0;
   bool isFavorited = false;
-
-  /// Funcion encargada de actualizar los campos de la tapa
-  actualizaTapa(Tapa tapita) {
-    tapa = tapita;
-
-    setState(() {
-      Provider.of<TapaProvider>(context, listen: false).brewery = tapa.brewery;
-      Provider.of<TapaProvider>(context, listen: false).brewCountry =
-          tapa.brewCountry;
-      Provider.of<TapaProvider>(context, listen: false).brewCountryCode =
-          tapa.brewCountryCode;
-      Provider.of<TapaProvider>(context, listen: false).tapaAsString =
-          tapa.imagen;
-      Provider.of<TapaProvider>(context, listen: false).type = tapa.type;
-      Provider.of<TapaProvider>(context, listen: false).model = tapa.model;
-      Provider.of<TapaProvider>(context, listen: false).place = tapa.place;
-      Provider.of<TapaProvider>(context, listen: false).date = tapa.date;
-      Provider.of<TapaProvider>(context, listen: false).color1 =
-          stringToColor(tapa.primColor);
-      Provider.of<TapaProvider>(context, listen: false).color2 =
-          stringToColor(tapa.secoColor);
-
-      isFavorited = tapa.isFavorited == 0 ? false : true;
-    });
-  }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      actualizaTapa(ModalRoute.of(context)!.settings.arguments as Tapa);
+      id = ModalRoute.of(context)?.settings.arguments as int;
     });
   }
 
@@ -167,73 +144,30 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
   /// FAB para guardar la tapa
   Widget fabToSaveTapa() {
     return FloatingActionButton.extended(
-        onPressed: () {
-          if (Provider.of<TapaProvider>(context, listen: false)
-              .tapaAsString
-              .isNotEmpty) {
-            if (tapa.id! > 0) {
-              tapa.imagen = Provider.of<TapaProvider>(context, listen: false)
-                  .tapaAsString;
-              tapa.brewery = Provider.of<TapaProvider>(context, listen: false)
-                  .brewery
-                  .trim();
-              tapa.primColor = colorToString(
-                  Provider.of<TapaProvider>(context, listen: false).color1);
-              tapa.secoColor = colorToString(
-                  Provider.of<TapaProvider>(context, listen: false).color2);
-              tapa.date =
-                  Provider.of<TapaProvider>(context, listen: false).date;
-              tapa.place = Provider.of<TapaProvider>(context, listen: false)
-                  .place
-                  .trim();
-              tapa.brewCountry =
-                  Provider.of<TapaProvider>(context, listen: false).brewCountry;
-              tapa.brewCountryCode =
-                  Provider.of<TapaProvider>(context, listen: false)
-                      .brewCountryCode;
-              //tapa.type = selectedType.contains('?') ? "" : selectedType;
-              tapa.type = Provider.of<TapaProvider>(context, listen: false)
-                      .type
-                      .contains('?')
+        onPressed: () async {
+          if (context.read<TapaProvider>().tapaAsString.isNotEmpty) {
+            final isar = Isar.getInstance();
+
+            final newTapa = Tapa()
+              ..brewCountry = context.read<TapaProvider>().brewCountry
+              ..brewCountryCode = context.read<TapaProvider>().brewCountryCode
+              ..brewery = context.read<TapaProvider>().brewery
+              ..date = context.read<TapaProvider>().date
+              ..imagen = context.read<TapaProvider>().tapaAsString
+              ..model = context.read<TapaProvider>().model
+              ..place = context.read<TapaProvider>().place
+              ..primColor = colorToString(context.read<TapaProvider>().color1)
+              ..rating = context.read<TapaProvider>().rating
+              ..secoColor = colorToString(context.read<TapaProvider>().color2)
+              ..type = context.read<TapaProvider>().type.contains('?')
                   ? ""
-                  : Provider.of<TapaProvider>(context, listen: false).type;
-              tapa.isFavorited = isFavorited ? 1 : 0;
-              tapa.rating = lastRating;
-              tapa.model = Provider.of<TapaProvider>(context, listen: false)
-                  .model
-                  .trim();
-              DB.update(tapa);
-            } else {
-              DB.insert(Tapa(
-                  imagen: Provider.of<TapaProvider>(context, listen: false)
-                      .tapaAsString,
-                  brewery: Provider.of<TapaProvider>(context, listen: false)
-                      .brewery
-                      .trim(),
-                  primColor: colorToString(
-                      Provider.of<TapaProvider>(context, listen: false).color1),
-                  secoColor: colorToString(
-                      Provider.of<TapaProvider>(context, listen: false).color2),
-                  date: Provider.of<TapaProvider>(context, listen: false).date,
-                  place: Provider.of<TapaProvider>(context, listen: false)
-                      .place
-                      .trim(),
-                  brewCountry: Provider.of<TapaProvider>(context, listen: false)
-                      .brewCountry,
-                  brewCountryCode:
-                      Provider.of<TapaProvider>(context, listen: false)
-                          .brewCountryCode,
-                  type: Provider.of<TapaProvider>(context, listen: false)
-                          .type
-                          .contains('?')
-                      ? ""
-                      : Provider.of<TapaProvider>(context, listen: false).type,
-                  isFavorited: isFavorited ? 1 : 0,
-                  rating: lastRating,
-                  model: Provider.of<TapaProvider>(context, listen: false)
-                      .model
-                      .trim()));
-            }
+                  : context.read<TapaProvider>().type;
+
+            if (id != 0) newTapa.id = id;
+
+            await isar!.writeTxn(() async {
+              await isar.tapas.put(newTapa); // insert & update
+            });
             Navigator.pop(context);
           } else {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -267,8 +201,11 @@ class _CreaTapaExpandableState extends State<CreaTapaExpandable> {
                       },
                       child: Text("Cancel")),
                   TextButton(
-                      onPressed: () {
-                        DB.delete(tapa);
+                      onPressed: () async {
+                        final isar = Isar.getInstance();
+                        await isar!.writeTxn(() async {
+                          await isar.tapas.delete(id); // insert & update
+                        });
                         Navigator.pop(context);
                         Navigator.pop(context2);
                       },

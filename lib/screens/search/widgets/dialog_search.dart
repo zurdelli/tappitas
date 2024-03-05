@@ -245,16 +245,7 @@ class _DialogSearchState extends State<DialogSearch> {
   /// Crea la clausula para la busqueda en la bbdd
   void getClausule(BuildContext context, String marC, String paiC, String tipC,
       String dateC, String placeC, String fgColC, String bgColC) {
-    // Los % son para que el termino pueda ser inexacto
-    List<String> myList = [
-      '%$marC%',
-      '%$paiC%',
-      '%$tipC%',
-      '%$dateC%',
-      '%$placeC%',
-      '%$fgColC%',
-      '%$bgColC%'
-    ];
+    List<String> myList = [marC, paiC, tipC, dateC, placeC, fgColC, bgColC];
     print("myList: $myList");
     Navigator.popAndPushNamed(context, '/busqtapa', arguments: myList);
   }

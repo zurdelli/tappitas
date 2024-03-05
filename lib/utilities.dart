@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:provider/provider.dart';
 import 'package:tappitas/db.dart';
 import 'package:tappitas/models/tapa.dart';
-import 'package:tappitas/screens/library/library.dart';
+import 'package:tappitas/provider/tapa_provider.dart';
+import 'package:tappitas/screens/home/home.dart';
 
 /// Translates color <-> string
 String colorToString(Color color) {
@@ -145,7 +147,24 @@ ListView createListview(BuildContext context, List<Tapa> tapas,
             onDismissed: (direction) {},
             confirmDismiss: (direction) async {
               if (direction == DismissDirection.startToEnd) {
-                Navigator.pushNamed(context, "/formtapa", arguments: tapas[i])
+                context.read<TapaProvider>().brewery = tapas[i].brewery ?? "";
+                context.read<TapaProvider>().brewCountry =
+                    tapas[i].brewCountry ?? "";
+                context.read<TapaProvider>().brewCountryCode =
+                    tapas[i].brewCountryCode ?? "";
+                context.read<TapaProvider>().tapaAsString =
+                    tapas[i].imagen ?? "";
+                context.read<TapaProvider>().type = tapas[i].type ?? "";
+                context.read<TapaProvider>().model = tapas[i].model ?? "";
+                context.read<TapaProvider>().place = tapas[i].place ?? "";
+                context.read<TapaProvider>().date = tapas[i].date ?? "";
+                context.read<TapaProvider>().color1 =
+                    stringToColor(tapas[i].primColor ?? "");
+                context.read<TapaProvider>().color2 =
+                    stringToColor(tapas[i].secoColor ?? "");
+
+                Navigator.pushNamed(context, "/formtapa",
+                        arguments: tapas[i].id)
                     .then((_) => (clausulas == null
                         ? callback(lastOrderMethod)
                         : callback(clausulas)));
@@ -169,11 +188,11 @@ ListView createListview(BuildContext context, List<Tapa> tapas,
                       style: TextStyle(fontStyle: FontStyle.italic),
                     ),
                     TextSpan(
-                        text: tapas[i].brewCountryCode.isEmpty
+                        text: tapas[i].brewCountryCode!.isEmpty
                             ? ""
-                            : " ${countryCodeToEmoji(tapas[i].brewCountryCode)}"),
+                            : " ${countryCodeToEmoji(tapas[i].brewCountryCode!)}"),
                     TextSpan(
-                      text: tapas[i].type.isEmpty ? "" : " - ${tapas[i].type}",
+                      text: tapas[i].type!.isEmpty ? "" : " - ${tapas[i].type}",
                     ),
                     TextSpan(
                         text: tapas[i].rating == 0.0
@@ -183,39 +202,39 @@ ListView createListview(BuildContext context, List<Tapa> tapas,
                 ),
               ),
               leading: CircleAvatar(
-                backgroundImage: MemoryImage(base64Decode(tapas[i].imagen)),
+                backgroundImage: MemoryImage(base64Decode(tapas[i].imagen!)),
                 radius: 30.0,
               ),
-              subtitle: tapas[i].place.isEmpty
+              subtitle: tapas[i].place!.isEmpty
                   ? Text("Drunk ${tapas[i].date}")
                   : Text("Drunk ${tapas[i].date} \nin ${tapas[i].place}"),
               isThreeLine: true,
               trailing: IconButton(
                   onPressed: () {
-                    if (tapas[i].isFavorited == 0) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: const Text("Added to favs"),
-                        showCloseIcon: true,
-                        duration: Duration(seconds: 1),
-                      ));
-                      DB.updateFavorite(1, tapas[i].id);
-                      callback(lastOrderMethod);
-                    } else if (tapas[i].isFavorited == 1) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: const Text("Removed from favs"),
-                        showCloseIcon: true,
-                        duration: Duration(seconds: 1),
-                      ));
-                      DB.updateFavorite(0, tapas[i].id);
-                      callback(lastOrderMethod);
-                    }
+                    // if (tapas[i].isFavorited == 0) {
+                    //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    //     content: const Text("Added to favs"),
+                    //     showCloseIcon: true,
+                    //     duration: Duration(seconds: 1),
+                    //   ));
+                    //   DB.updateFavorite(1, tapas[i].id);
+                    //   callback(lastOrderMethod);
+                    // } else if (tapas[i].isFavorited == 1) {
+                    //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    //     content: const Text("Removed from favs"),
+                    //     showCloseIcon: true,
+                    //     duration: Duration(seconds: 1),
+                    //   ));
+                    //   DB.updateFavorite(0, tapas[i].id);
+                    //   callback(lastOrderMethod);
+                    // }
                   },
                   icon: tapas[i].isFavorited == 0
                       ? Icon(Icons.favorite_border)
                       : Icon(Icons.favorite)),
               iconColor: tapas[i].isFavorited == 0 ? Colors.grey : Colors.red,
               onTap: () {
-                alertTapa(context, tapas[i].imagen, dialog: 'tapas');
+                alertTapa(context, tapas[i].imagen!, dialog: 'tapas');
               },
               dense: false,
               horizontalTitleGap: 10,
@@ -225,34 +244,34 @@ ListView createListview(BuildContext context, List<Tapa> tapas,
 }
 
 /// Crea el alert de confirmDismiss que debe retornar un bool
-Future<bool?> _showConfirmationDialogToDeleteTapa(
-    BuildContext context, int i, List<Tapa> tapas, Function callback) {
-  return showDialog<bool>(
-    context: context,
-    barrierDismissible: true,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text("Eliminar"),
-        content: Text("¿Está seguro de querer eliminar la tapa?"),
-        actions: [
-          TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                //MiLista().setState(() {});
-              },
-              child: Text("Cancelar")),
-          TextButton(
-              onPressed: () {
-                DB.delete(tapas[i]);
-                Navigator.pop(context);
-                callback(lastOrderMethod);
-              },
-              child: Text("Eliminar"))
-        ],
-      );
-    },
-  );
-}
+// Future<bool?> _showConfirmationDialogToDeleteTapa(
+//     BuildContext context, int i, List<Tapa> tapas, Function callback) {
+//   return showDialog<bool>(
+//     context: context,
+//     barrierDismissible: true,
+//     builder: (BuildContext context) {
+//       return AlertDialog(
+//         title: Text("Eliminar"),
+//         content: Text("¿Está seguro de querer eliminar la tapa?"),
+//         actions: [
+//           TextButton(
+//               onPressed: () {
+//                 Navigator.pop(context);
+//                 //MiLista().setState(() {});
+//               },
+//               child: Text("Cancelar")),
+//           TextButton(
+//               onPressed: () {
+//                 DB.delete(tapas[i]);
+//                 Navigator.pop(context);
+//                 callback(lastOrderMethod);
+//               },
+//               child: Text("Eliminar"))
+//         ],
+//       );
+//     },
+//   );
+// }
 
 /// AlertDialog para la busqueda de tapas
 /// dialog = 0 -> Busqueda de tapas (alertBusqueda)

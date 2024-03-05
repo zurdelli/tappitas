@@ -1,4 +1,4 @@
-#Fri Dec 01 19:57:04 CET 2023
+#Sun Mar 03 17:55:25 CET 2024
 base.0=D\:\\Documentos\\Cursos\\Flutter\\tappitas\\tappitas\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
 path.0=classes.dex
 renamed.0=classes.dex

@@ -52,8 +52,10 @@ class _DrinkedAtRowState extends State<DrinkedAtRow> {
                 onTap: () async {
                   DateTime? pickedDate = await showDatePicker(
                       context: context,
-                      initialDate:
-                          DateTime.parse(context.read<TapaProvider>().date),
+                      initialDate: DateTime.parse(
+                          context.read<TapaProvider>().date != Null
+                              ? DateTime.now().toString()
+                              : context.read<TapaProvider>().date),
                       firstDate: DateTime(2000),
                       lastDate: DateTime.now());
                   if (pickedDate != null) {

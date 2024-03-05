@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
 import 'package:tappitas/db.dart';
+import 'package:tappitas/models/tapa.dart';
 import 'package:tappitas/provider/order_provider.dart';
 
 class Statistics extends StatelessWidget {
@@ -17,12 +19,13 @@ class Statistics extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              "Total: ${Provider.of<OrderProvider>(context).cantTappas}",
+              "Total: ${context.read<OrderProvider>().cantTappas}",
               style: TextStyle(
                 fontSize: 20,
               ),
             ),
             SingleChildScrollView(
+              //child: Container(),
               child: FutureBuilder<List<Step>>(
                   future: getStatistics(),
                   builder: (BuildContext context,
@@ -111,27 +114,49 @@ class Step {
 Future<List<Step>> getStatistics() async {
   var items = [
     Step('By Color', await listOfSomething("primColor")),
-    Step('By Country', await listOfSomething("brewCountry")),
-    Step('By Brewery', await listOfSomething("brewery")),
-    Step('By Date', await listOfSomething("date")),
-    Step('By Place', await listOfSomething("place")),
+    //Step('By Country', await listOfSomething("brewCountry")),
+    //Step('By Brewery', await listOfSomething("brewery")),
+    //Step('By Date', await listOfSomething("date")),
+    //Step('By Place', await listOfSomething("place")),
   ];
   return items;
 }
 
 Future<String> listOfSomething(String clausule) async {
-  List lista = await DB.gimmeSomeData(clausule);
+  final isar = Isar.getInstance();
+  //List<Tapa> tapasAux = await isar!.tapas.where().findAll();
+
+  final lista = await isar!.tapas
+      .where()
+      .distinctByPrimColor()
+      .primColorProperty()
+      .findAll();
+
+  Map<String, int> listaColores = {};
+
+  for (final color in lista) {
+    listaColores[color!] =
+        await isar.tapas.filter().primColorEqualTo(color).count();
+  }
+
+  print(listaColores.values);
 
   StringBuffer myString = StringBuffer();
 
-  for (var element in lista) {
-    myString.write('\n');
-    element.forEach((k, v) {
-      v.toString().isEmpty
-          ? myString.write("undefined ")
-          : myString.write("$v ");
-    });
+  for (var i = 0; i < listaColores.length; i++) {
+    myString.write(listaColores.keys);
+    myString.write(listaColores.values);
   }
+  print(myString);
+
+  // for (var element in listaColores.) {
+  //    myString.write('\n');
+
+  // element.forEach((k, v) {
+  //   v.toString().isEmpty
+  //       ? myString.write("undefined ")
+  //       : myString.write("$v ");
+  // });
 
   return myString.toString();
 }

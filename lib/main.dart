@@ -5,7 +5,7 @@ import 'package:tappitas/provider/tapa_provider.dart';
 import 'package:tappitas/screens/DBExporterImporter/db_importer_exporter.dart';
 import 'package:tappitas/screens/about/about.dart';
 import 'package:tappitas/screens/formTapa/form_tapa_expandable.dart';
-import 'package:tappitas/screens/library/library.dart';
+import 'package:tappitas/screens/home/home.dart';
 import 'package:tappitas/screens/search/search.dart';
 import 'package:tappitas/screens/statistics/statistics.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
