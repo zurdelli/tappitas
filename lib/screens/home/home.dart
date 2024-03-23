@@ -60,9 +60,9 @@ class _ListaState extends State<Lista> {
           child: Icon(Icons.add),
           onPressed: () {
             clearProvider();
-            Navigator.pushNamed(context, "/formtapa", arguments: 0);
-            // Necesario para el reload de la listview
-            //.then((_) => cargaTapitas(lastOrderMethod));
+            Navigator.pushNamed(context, "/formtapa", arguments: 0)
+                // Necesario para el reload de la listview
+                .then((_) => cargaTapitas(lastOrderMethod));
           },
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,

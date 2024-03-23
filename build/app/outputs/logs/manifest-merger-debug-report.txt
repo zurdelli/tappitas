@@ -122,6 +122,12 @@ uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
 ADDED from D:\Documentos\Cursos\Flutter\tappitas\tappitas\android\app\src\main\AndroidManifest.xml:10:5-80
 	android:name
 		ADDED from D:\Documentos\Cursos\Flutter\tappitas\tappitas\android\app\src\main\AndroidManifest.xml:10:22-78
+uses-permission#android.permission.READ_EXTERNAL_STORAGE
+ADDED from D:\Documentos\Cursos\Flutter\tappitas\tappitas\android\app\src\main\AndroidManifest.xml:11:5-79
+MERGED from [:file_picker] D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:9:5-80
+MERGED from [:file_picker] D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:9:5-80
+	android:name
+		ADDED from D:\Documentos\Cursos\Flutter\tappitas\tappitas\android\app\src\main\AndroidManifest.xml:11:22-77
 uses-permission#android.permission.ACCESS_MEDIA_LOCATION
 ADDED from D:\Documentos\Cursos\Flutter\tappitas\tappitas\android\app\src\main\AndroidManifest.xml:12:5-79
 	android:name
@@ -242,10 +248,6 @@ uses-permission#android.permission.INTERNET
 ADDED from D:\Documentos\Cursos\Flutter\tappitas\tappitas\android\app\src\debug\AndroidManifest.xml:7:5-66
 	android:name
 		ADDED from D:\Documentos\Cursos\Flutter\tappitas\tappitas\android\app\src\debug\AndroidManifest.xml:7:22-64
-uses-permission#android.permission.READ_EXTERNAL_STORAGE
-ADDED from [:file_picker] D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:9:5-80
-	android:name
-		ADDED from [:file_picker] D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:9:22-77
 intent#action:name:android.intent.action.GET_CONTENT+data:mimeType:*/*
 ADDED from [:file_picker] D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:12:9-16:18
 action#android.intent.action.GET_CONTENT

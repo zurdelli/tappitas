@@ -43,18 +43,18 @@
 29        </intent>
 30    </queries>
 31
-32    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/> -->
+32    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 32-->D:\Documentos\Cursos\Flutter\tappitas\tappitas\android\app\src\main\AndroidManifest.xml:10:5-80
 32-->D:\Documentos\Cursos\Flutter\tappitas\tappitas\android\app\src\main\AndroidManifest.xml:10:22-78
-33    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
-33-->D:\Documentos\Cursos\Flutter\tappitas\tappitas\android\app\src\main\AndroidManifest.xml:12:5-79
-33-->D:\Documentos\Cursos\Flutter\tappitas\tappitas\android\app\src\main\AndroidManifest.xml:12:22-77
-34    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
-34-->D:\Documentos\Cursos\Flutter\tappitas\tappitas\android\app\src\main\AndroidManifest.xml:13:5-81
-34-->D:\Documentos\Cursos\Flutter\tappitas\tappitas\android\app\src\main\AndroidManifest.xml:13:22-79
-35    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-35-->[:file_picker] D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:9:5-80
-35-->[:file_picker] D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:9:22-77
+33    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+33-->D:\Documentos\Cursos\Flutter\tappitas\tappitas\android\app\src\main\AndroidManifest.xml:11:5-79
+33-->D:\Documentos\Cursos\Flutter\tappitas\tappitas\android\app\src\main\AndroidManifest.xml:11:22-77
+34    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
+34-->D:\Documentos\Cursos\Flutter\tappitas\tappitas\android\app\src\main\AndroidManifest.xml:12:5-79
+34-->D:\Documentos\Cursos\Flutter\tappitas\tappitas\android\app\src\main\AndroidManifest.xml:12:22-77
+35    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+35-->D:\Documentos\Cursos\Flutter\tappitas\tappitas\android\app\src\main\AndroidManifest.xml:13:5-81
+35-->D:\Documentos\Cursos\Flutter\tappitas\tappitas\android\app\src\main\AndroidManifest.xml:13:22-79
 36    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 36-->[:location] D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\location\intermediates\merged_manifest\debug\AndroidManifest.xml:9:5-81
 36-->[:location] D:\Documentos\Cursos\Flutter\tappitas\tappitas\build\location\intermediates\merged_manifest\debug\AndroidManifest.xml:9:22-78

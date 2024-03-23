@@ -114,10 +114,10 @@ class Step {
 Future<List<Step>> getStatistics() async {
   var items = [
     Step('By Color', await listOfSomething("primColor")),
-    //Step('By Country', await listOfSomething("brewCountry")),
-    //Step('By Brewery', await listOfSomething("brewery")),
-    //Step('By Date', await listOfSomething("date")),
-    //Step('By Place', await listOfSomething("place")),
+    Step('By Country', await listOfSomething("brewCountry")),
+    Step('By Brewery', await listOfSomething("brewery")),
+    Step('By Date', await listOfSomething("date")),
+    Step('By Place', await listOfSomething("place")),
   ];
   return items;
 }
@@ -126,37 +126,94 @@ Future<String> listOfSomething(String clausule) async {
   final isar = Isar.getInstance();
   //List<Tapa> tapasAux = await isar!.tapas.where().findAll();
 
-  final lista = await isar!.tapas
-      .where()
-      .distinctByPrimColor()
-      .primColorProperty()
-      .findAll();
+  final lista;
+  Map<String, int> mapaColores = {};
 
-  Map<String, int> listaColores = {};
+  switch (clausule) {
+    case "primColor":
+      lista = await isar!.tapas
+          .where()
+          .distinctByPrimColor()
+          .primColorProperty()
+          .findAll();
 
-  for (final color in lista) {
-    listaColores[color!] =
-        await isar.tapas.filter().primColorEqualTo(color).count();
+      for (final color in lista) {
+        mapaColores[color!] =
+            await isar.tapas.filter().primColorEqualTo(color).count();
+      }
+      print(lista);
+      break;
+    case "brewCountry":
+      lista = await isar!.tapas
+          .where()
+          .sortByBrewCountryDesc()
+          .distinctByBrewCountry()
+          .brewCountryProperty()
+          .findAll();
+
+      for (final color in lista) {
+        mapaColores[color!] =
+            await isar.tapas.filter().brewCountryEqualTo(color).count();
+      }
+      break;
+    case "brewery":
+      lista = await isar!.tapas
+          .where()
+          .sortByBreweryDesc()
+          .distinctByBrewery()
+          .breweryProperty()
+          .findAll();
+
+      for (final color in lista) {
+        mapaColores[color!] =
+            await isar.tapas.filter().breweryEqualTo(color).count();
+      }
+      break;
+    case "date":
+      lista = await isar!.tapas
+          .where()
+          .sortByDateDesc()
+          .distinctByDate()
+          .dateProperty()
+          .findAll();
+
+      for (final color in lista) {
+        mapaColores[color!] =
+            await isar.tapas.filter().dateEqualTo(color).count();
+      }
+      break;
+    case "place":
+      lista = await isar!.tapas
+          .where()
+          .sortByPlaceDesc()
+          .distinctByPlace()
+          .placeProperty()
+          .findAll();
+
+      for (final color in lista) {
+        mapaColores[color!] =
+            await isar.tapas.filter().placeEqualTo(color).count();
+      }
+      break;
   }
 
-  print(listaColores.values);
+  //print(mapaColores.toString());
 
   StringBuffer myString = StringBuffer();
 
-  for (var i = 0; i < listaColores.length; i++) {
-    myString.write(listaColores.keys);
-    myString.write(listaColores.values);
+  var sortedByValueList = mapaColores.entries.toList()
+    ..sort((e1, e2) => e1.value.compareTo(e2.value));
+
+  final sortedByValueMap = Map.fromEntries(sortedByValueList.reversed);
+  //print(sortedByValueMap.entries.toList().reversed);
+
+  for (var element in sortedByValueMap.entries) {
+    myString.write(element.value);
+    myString.write(' ');
+    myString.write(element.key.isEmpty ? "undefined" : element.key);
+    myString.write('\n');
   }
-  print(myString);
 
-  // for (var element in listaColores.) {
-  //    myString.write('\n');
-
-  // element.forEach((k, v) {
-  //   v.toString().isEmpty
-  //       ? myString.write("undefined ")
-  //       : myString.write("$v ");
-  // });
-
+  //print(myString);
   return myString.toString();
 }

@@ -1,11 +1,15 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:isar/isar.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:tappitas/models/tapa.dart';
 
 /// Class to export or import a sqlite database
 class DBImporterExporter extends StatefulWidget {
@@ -45,37 +49,7 @@ class _DBImporterExporterState extends State<DBImporterExporter> {
               color: Color.fromARGB(135, 103, 120, 128),
               title: 'Export database',
               onPressed: () async {
-                String databasesPath = await getDatabasesPath();
-                String dbPath = join(databasesPath, nombreTabla);
-                File source1 = File(dbPath);
-                Directory copyTo = Directory(targetDir);
-                if ((await copyTo.exists())) {
-                  var status = await Permission.storage.status;
-                  if (!status.isGranted) {
-                    await Permission.storage.request();
-                  }
-                } else {
-                  print("not exist");
-                  if (await Permission.storage.request().isGranted) {
-                    // Either the permission was already granted before or the user just granted it.
-                    await copyTo.create(recursive: true);
-                  } else {
-                    print('Please give permission');
-                  }
-                }
-                String today = DateFormat('dd-MM-yyyy,H-m-s')
-                    .format(DateTime.now())
-                    .toString();
-
-                // Its needed to change the name for each backup - if not you won't be able to
-                // restore the backup later
-                String backupFile = "${copyTo.path}/$nombreTabla-$today.backup";
-
-                await source1.copy(backupFile);
-
-                setState(() {
-                  message = 'Successfully Exported DB at: \n$backupFile';
-                });
+                backupIsarDB();
               },
             ),
             CustomButton(
@@ -114,21 +88,22 @@ class _DBImporterExporterState extends State<DBImporterExporter> {
               color: const Color.fromARGB(255, 36, 82, 38),
               title: 'Import database',
               onPressed: () async {
-                var databasesPath = await getDatabasesPath();
-                var dbPath = join(databasesPath, nombreTabla);
+                restoreIsarDB();
+                // var databasesPath = await getDatabasesPath();
+                // var dbPath = join(databasesPath, nombreTabla);
 
-                FilePickerResult? result =
-                    await FilePicker.platform.pickFiles(withData: true);
+                // FilePickerResult? result =
+                //     await FilePicker.platform.pickFiles(withData: true);
 
-                if (result != null) {
-                  String resultPath = result.files.single.path!;
-                  File source = File(resultPath);
-                  await source.copy(dbPath);
+                // if (result != null) {
+                //   String resultPath = result.files.single.path!;
+                //   File source = File(resultPath);
+                //   await source.copy(dbPath);
 
-                  setState(() {
-                    message = 'Successfully imported DB';
-                  });
-                }
+                //   setState(() {
+                //     message = 'Successfully imported DB';
+                //   });
+                // }
               },
             ),
             SizedBox(
@@ -142,6 +117,41 @@ class _DBImporterExporterState extends State<DBImporterExporter> {
         ),
       ),
     );
+  }
+
+  restoreIsarDB() async {
+    final dir = await getApplicationDocumentsDirectory();
+
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      File sourceFile = File(result.files.single.path!);
+
+      await Isar.getInstance()!.close(deleteFromDisk: true).then((_) async {
+        File targetFile = await sourceFile.copy("${dir.path}/default.isar");
+        print("Correctly copied to ${targetFile.path}");
+        await Isar.open(
+          [TapaSchema],
+          directory: dir.path,
+        );
+      });
+
+      setState(() {
+        message = 'Successfully imported DB';
+      });
+    }
+  }
+
+  backupIsarDB() async {
+    final tapasInstance = Isar.getInstance();
+    String targetFile =
+        "$targetDir/${DateFormat('dd-MM-yyyy,H-m').format(DateTime.now()).toString()}.isar";
+
+    tapasInstance!.copyToFile(targetFile);
+
+    setState(() {
+      message = 'Successfully Exported DB at: \n$targetFile';
+    });
   }
 }
 
@@ -180,7 +190,3 @@ class CustomButton extends StatelessWidget {
     );
   }
 }
-
-// Widget customButton(BuildContext context){
-
-// }
