@@ -20,18 +20,6 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: <Widget>[
         IconButton(
             onPressed: () {
-              // showDialog(
-              //   builder: (context) => BackdropFilter(
-              //     filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              //     child: AlertDialog(
-              //       //shape: CircleBorder(),
-              //       content: DialogSearch(),
-              //     ),
-              //   ),
-              //   context: context,
-              // );
-              //BottomSheet
-
               showBottomSheet(
                   context: context,
                   enableDrag: true,

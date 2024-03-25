@@ -209,32 +209,32 @@ ListView createListview(BuildContext context, List<Tapa> tapas,
                   ? Text("Drunk ${tapas[i].date}")
                   : Text("Drunk ${tapas[i].date} \nin ${tapas[i].place}"),
               isThreeLine: true,
-              trailing: IconButton(
-                  onPressed: () {
-                    // if (tapas[i].isFavorited == 0) {
-                    //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    //     content: const Text("Added to favs"),
-                    //     showCloseIcon: true,
-                    //     duration: Duration(seconds: 1),
-                    //   ));
-                    //   DB.updateFavorite(1, tapas[i].id);
-                    //   callback(lastOrderMethod);
-                    // } else if (tapas[i].isFavorited == 1) {
-                    //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    //     content: const Text("Removed from favs"),
-                    //     showCloseIcon: true,
-                    //     duration: Duration(seconds: 1),
-                    //   ));
-                    //   DB.updateFavorite(0, tapas[i].id);
-                    //   callback(lastOrderMethod);
-                    // }
-                  },
-                  icon: tapas[i].isFavorited == 0
-                      ? Icon(Icons.favorite_border)
-                      : Icon(Icons.favorite)),
-              iconColor: tapas[i].isFavorited == 0 ? Colors.grey : Colors.red,
+              // trailing: IconButton(
+              //     onPressed: () {
+              //       // if (tapas[i].isFavorited == 0) {
+              //       //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              //       //     content: const Text("Added to favs"),
+              //       //     showCloseIcon: true,
+              //       //     duration: Duration(seconds: 1),
+              //       //   ));
+              //       //   DB.updateFavorite(1, tapas[i].id);
+              //       //   callback(lastOrderMethod);
+              //       // } else if (tapas[i].isFavorited == 1) {
+              //       //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              //       //     content: const Text("Removed from favs"),
+              //       //     showCloseIcon: true,
+              //       //     duration: Duration(seconds: 1),
+              //       //   ));
+              //       //   DB.updateFavorite(0, tapas[i].id);
+              //       //   callback(lastOrderMethod);
+              //       // }
+              //     },
+              //     icon: tapas[i].isFavorited == 0
+              //         ? Icon(Icons.favorite_border)
+              //         : Icon(Icons.favorite)),
+              // iconColor: tapas[i].isFavorited == 0 ? Colors.grey : Colors.red,
               onTap: () {
-                alertTapa(context, tapas[i].imagen!, dialog: 'tapas');
+                alertTapa(context, tapas[i].imagen!);
               },
               dense: false,
               horizontalTitleGap: 10,
@@ -273,25 +273,20 @@ ListView createListview(BuildContext context, List<Tapa> tapas,
 //   );
 // }
 
-/// AlertDialog para la busqueda de tapas
-/// dialog = 0 -> Busqueda de tapas (alertBusqueda)
-///        = 1 -> Zoom tapa (alertTapa)
-alertTapa(BuildContext context, String tapaAsString, {required String dialog}) {
+alertTapa(BuildContext context, String tapaAsString) {
   showDialog(
       context: context,
       builder: (BuildContext context) => BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
             child: AlertDialog(
+              contentPadding: EdgeInsets.all(10),
               //elevation: 10,
               shape: CircleBorder(),
-              content: SizedBox(
+              content: Container(
                   height: 250,
                   width: 250,
-                  child: Center(
-                    child: CircleAvatar(
-                      backgroundImage: MemoryImage(base64Decode(tapaAsString)),
-                      radius: 200.0,
-                    ),
+                  child: CircleAvatar(
+                    foregroundImage: MemoryImage(base64Decode(tapaAsString)),
                   )),
             ),
           ));

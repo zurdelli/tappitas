@@ -40,12 +40,35 @@ class _ListaState extends State<Lista> {
 
   /// Carga tapitas sera el metodo encargado del setState
   void cargaTapitas(String lastOrderMethod) async {
+    //print("hollaaa1 - $lastOrderMethod");
     tapasInstance = Isar.getInstance()!;
 
     /// auxTapa es una lista de tapas obtenida desde la ddbb
-    final auxTapa = await tapasInstance.tapas.where().findAll();
+    final auxTapa = tapasInstance.tapas.where();
+    List<Tapa> a;
+    switch (lastOrderMethod) {
+      case "brewery":
+        a = await auxTapa.sortByBrewery().findAll();
+        break;
+      case "brewCountry":
+        a = await auxTapa.sortByBrewCountry().findAll();
+        break;
+      case "date":
+        a = await auxTapa.sortByDate().findAll();
+        break;
+      case "primColor":
+        a = await auxTapa.sortByPrimColor().findAll();
+        break;
+      case "place":
+        a = await auxTapa.sortByPlace().findAll();
+        break;
+      default:
+        a = await auxTapa.findAll();
+        break;
+    }
+
     setState(() {
-      tapitas = auxTapa;
+      tapitas = a;
       context.read<OrderProvider>().cantTappas = tapitas.length;
     });
   }
@@ -83,13 +106,4 @@ class _ListaState extends State<Lista> {
     context.read<TapaProvider>().tapaAsString = "";
     context.read<TapaProvider>().type = "";
   }
-
-  // Widget lista() {
-  //   //return Container();
-  //   return FutureBuilder(
-  //       builder: (context, snapshot) => !snapshot.hasData
-  //           ? Center(child: CircularProgressIndicator())
-  //           : Container(),
-  //       future: tapasInstance.tapa.where().findAll());
-  // }
 }
