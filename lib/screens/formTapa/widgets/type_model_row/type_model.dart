@@ -64,6 +64,7 @@ class _TypeModelRowState extends State<TypeModelRow> {
       borderRadius: BorderRadius.all(Radius.circular(10)),
       value: valor,
       elevation: 16,
+      isExpanded: true,
       //style: const TextStyle(color: Colors.black, fontSize: 16),
       onChanged: (String? value) {
         setState(() {

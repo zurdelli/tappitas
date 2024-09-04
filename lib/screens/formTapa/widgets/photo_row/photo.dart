@@ -41,7 +41,9 @@ class _PhotoRowState extends State<PhotoRow> {
               child: tapaAsStringBase64.isEmpty
                   ? const Text(
                       'No image selected',
-                      style: TextStyle(fontSize: 20, color: Colors.black),
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
                     )
                   : CircleAvatar(
                       backgroundImage:
@@ -84,7 +86,7 @@ class _PhotoRowState extends State<PhotoRow> {
   Future _pickImage(ImageSource source) async {
     try {
       final XFile? image =
-          await ImagePicker().pickImage(source: source, imageQuality: 100);
+          await ImagePicker().pickImage(source: source, imageQuality: 50);
       if (image == null) return;
 
       File? img = File(image.path);
@@ -103,13 +105,8 @@ class _PhotoRowState extends State<PhotoRow> {
     ], uiSettings: [
       AndroidUiSettings(
           toolbarTitle: 'Crop',
-          cropGridColor: Colors.black,
           initAspectRatio: CropAspectRatioPreset.original,
-          lockAspectRatio: true,
-          toolbarWidgetColor:
-              MediaQuery.of(context).platformBrightness == Brightness.light
-                  ? Colors.black
-                  : Colors.white),
+          lockAspectRatio: true),
       IOSUiSettings(title: 'Crop')
     ]);
 

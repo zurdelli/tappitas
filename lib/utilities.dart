@@ -120,13 +120,6 @@ ListView createListview(BuildContext context, List<Tapa> tapas,
       itemBuilder: (context, i) => Dismissible(
             key: Key(i.toString()),
             direction: DismissDirection.startToEnd,
-            // background: Container(
-            //     color: Colors.red,
-            //     padding: EdgeInsets.only(left: 5),
-            //     child: Align(
-            //         alignment: Alignment.centerLeft,
-            //         child: Icon(Icons.delete, color: Colors.white))),
-            //secondaryBackground: Container(
             background: Container(
                 color: Colors.blue,
                 child: (Padding(
@@ -135,13 +128,8 @@ ListView createListview(BuildContext context, List<Tapa> tapas,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: const [
                         Icon(Icons.edit),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Text(
-                          'Edit',
-                          style: TextStyle(color: Colors.white),
-                        )
+                        SizedBox(width: 8),
+                        Text('Edit', style: TextStyle(color: Colors.white))
                       ],
                     )))),
             onDismissed: (direction) {},
@@ -206,8 +194,8 @@ ListView createListview(BuildContext context, List<Tapa> tapas,
                 radius: 30.0,
               ),
               subtitle: tapas[i].place!.isEmpty
-                  ? Text("Drunk ${tapas[i].date}")
-                  : Text("Drunk ${tapas[i].date} \nin ${tapas[i].place}"),
+                  ? Text("\n${tapas[i].date}")
+                  : Text("Drunk in ${tapas[i].place}\n${tapas[i].date}"),
               isThreeLine: true,
               // trailing: IconButton(
               //     onPressed: () {

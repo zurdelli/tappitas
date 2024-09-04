@@ -77,9 +77,7 @@ class _DialogSearchState extends State<DialogSearch> {
                 ),
               ],
             ),
-            SizedBox(
-              height: 15,
-            ),
+            SizedBox(height: 15),
             Row(
               children: [
                 Expanded(
@@ -262,6 +260,7 @@ class _DialogSearchState extends State<DialogSearch> {
       ),
       borderRadius: BorderRadius.all(Radius.circular(10)),
       value: valor,
+      isExpanded: true,
       //elevation: 16,
       //style: const TextStyle(color: Colors.black, fontSize: 16),
       onChanged: (String? value) {

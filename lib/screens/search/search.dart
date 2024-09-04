@@ -27,13 +27,17 @@ class _ListaBusquedaState extends State<Busqueda> {
     final isar = Isar.getInstance();
     List<Tapa> tapasAux = await isar!.tapas
         .filter()
-        .breweryContains(clausula[0], caseSensitive: false)
         .brewCountryContains(clausula[1], caseSensitive: false)
         .typeContains(clausula[2], caseSensitive: false)
         .dateContains(clausula[3], caseSensitive: false)
         .placeContains(clausula[4], caseSensitive: false)
         .primColorContains(clausula[5], caseSensitive: false)
         .secoColorContains(clausula[6], caseSensitive: false)
+        .and()
+        .group((q) => q
+            .breweryContains(clausula[0], caseSensitive: false)
+            .or()
+            .modelContains(clausula[0], caseSensitive: false))
         .findAll();
     return tapasAux;
   }
